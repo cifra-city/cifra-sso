@@ -3,7 +3,7 @@
 //   sqlc v1.27.0
 // source: admins.sql
 
-package core
+package db
 
 import (
 	"context"

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.34.2
 // 	protoc        v3.21.12
-// source: resources/grpc/proto/sso.proto
+// source: resources/settings/proto/sso.proto
 
 package ssov1
 
@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	// Verify that this generated core is sufficiently up-to-date.
+	// Verify that this generated data is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(20 - protoimpl.MinVersion)
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)

@@ -15,8 +15,8 @@ INSERT INTO admins (
     uid,
     name
 ) VALUES (
-             $1, $2
-         ) RETURNING *;
+     $1, $2
+) RETURNING *;
 
 -- name: UpdateAdminByID :one
 UPDATE admins
