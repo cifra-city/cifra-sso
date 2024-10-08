@@ -1,0 +1,47 @@
+syntax = 'proto3';
+
+package auth;
+
+option go_package = "github.com/cifra-city/cifra-sso;ssov1";
+
+// Auth service for authentication and authorization users
+service Auth {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc IsAdmin(IsAdminRequest) returns (IsAdminResponse);
+}
+
+// Request for register new user, email and username must be unique, password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number and one special character
+message RegisterRequest {
+  repeated string email = 1; // at next version, this will be optional
+  repeated string username = 2;
+  repeated string password = 3;
+}
+
+// Response for register new user, user_id is the id of the new user
+message RegisterResponse {
+  int64 user_id = 1;
+}
+
+// Request for login, email or username can be used to login
+message LoginRequest {
+  repeated string email = 1; // at next version, this will be optional
+  repeated string username = 2;
+  repeated string password = 3;
+  repeated int32 app_id = 4;
+}
+
+// Response for login, token is the JWT token for the user
+message LoginResponse {
+  string token = 1;
+}
+
+// Request for checking if user is admin
+message IsAdminRequest {
+  repeated string token = 1;
+}
+
+// Response for checking if user is admin, is_admin is true if user is admin
+message IsAdminResponse {
+  bool is_admin = 1;
+}

@@ -1,0 +1,9 @@
+version: "2"
+sql:
+  - schema: service/db/migration
+    queries: service/db/query
+    engine: postgresql
+    gen:
+      go:
+        package: core
+        out: service/db/core
