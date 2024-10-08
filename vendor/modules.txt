@@ -1,3 +1,6 @@
+# github.com/google/uuid v1.6.0
+## explicit
+github.com/google/uuid
 # golang.org/x/net v0.28.0
 ## explicit; go 1.18
 golang.org/x/net/http/httpguts
