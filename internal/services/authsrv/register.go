@@ -1,39 +1,26 @@
-package procedure
+package authsrv
 
 import (
 	"context"
 	"database/sql"
-	"strings"
 
+	"github.com/cifra-city/cifra-sso/internal/db/data"
+	"github.com/cifra-city/cifra-sso/internal/domain"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
-	"github.com/cifra-city/cifra-sso/service/data/data"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-// AuthServer - структура для реализации gRPC сервиса.
-type AuthServer struct {
-	ssov1.UnimplementedAuthServer               // Для совместимости с gRPC.
-	Queries                       *data.Queries // Объект для работы с базой данных.
-}
-
-// NewAuthServer создает новый экземпляр AuthServer.
-func NewAuthServer(queries *data.Queries) *AuthServer {
-	return &AuthServer{
-		Queries: queries,
-	}
-}
-
-// Register - gRPC method for registering a new user.
+// Register - method for registering a new user.
 func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*ssov1.RegisterResponse, error) {
-	// Validate the incoming request data.
+	// Validate the incoming request db.
 	if in.Email == "" || in.Username == "" || in.Password == "" {
 		return nil, status.Error(codes.InvalidArgument, "email, username, and password are required")
 	}
 
 	// Check password length and requirements.
-	if len(in.Password) < 8 || !hasRequiredChars(in.Password) {
+	if len(in.Password) < 8 || !domain.HasRequiredChars(in.Password) {
 		return nil, status.Error(codes.InvalidArgument, "password must be at least 8 characters and contain uppercase, lowercase, number, and special character")
 	}
 
@@ -59,22 +46,4 @@ func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*
 
 	// Return the ID of the created user in the response.
 	return &ssov1.RegisterResponse{UserId: user.ID.String()}, nil
-}
-
-// hasRequiredChars checks if the password meets the character requirements.
-func hasRequiredChars(password string) bool {
-	var hasUpper, hasLower, hasNumber, hasSpecial bool
-	for _, char := range password {
-		switch {
-		case 'A' <= char && char <= 'Z':
-			hasUpper = true
-		case 'a' <= char && char <= 'z':
-			hasLower = true
-		case '0' <= char && char <= '9':
-			hasNumber = true
-		case strings.ContainsRune("!@#$%^&*()-_+=<>?", char):
-			hasSpecial = true
-		}
-	}
-	return hasUpper && hasLower && hasNumber && hasSpecial
 }

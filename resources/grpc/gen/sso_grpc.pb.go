@@ -19,16 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Auth_Register_FullMethodName = "/auth.Auth/Register"
-	Auth_Login_FullMethodName    = "/auth.Auth/Login"
-	Auth_IsAdmin_FullMethodName  = "/auth.Auth/IsAdmin"
+	Auth_Register_FullMethodName = "/authsrv.Auth/Register"
+	Auth_Login_FullMethodName    = "/authsrv.Auth/Login"
+	Auth_IsAdmin_FullMethodName  = "/authsrv.Auth/IsAdmin"
 )
 
-// AuthClient is the client API for Auth service.
+// AuthClient is the client API for Auth services.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Auth service for authentication and authorization users
+// Auth services for authentication and authorization users
 type AuthClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
@@ -73,11 +73,11 @@ func (c *authClient) IsAdmin(ctx context.Context, in *IsAdminRequest, opts ...gr
 	return out, nil
 }
 
-// AuthServer is the server API for Auth service.
+// AuthServer is the server API for Auth services.
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility.
 //
-// Auth service for authentication and authorization users
+// Auth services for authentication and authorization users
 type AuthServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
@@ -104,7 +104,7 @@ func (UnimplementedAuthServer) IsAdmin(context.Context, *IsAdminRequest) (*IsAdm
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 func (UnimplementedAuthServer) testEmbeddedByValue()              {}
 
-// UnsafeAuthServer may be embedded to opt out of forward compatibility for this service.
+// UnsafeAuthServer may be embedded to opt out of forward compatibility for this services.
 // Use of this interface is not recommended, as added methods to AuthServer will
 // result in compilation errors.
 type UnsafeAuthServer interface {
@@ -176,11 +176,11 @@ func _Auth_IsAdmin_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
-// Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
+// Auth_ServiceDesc is the grpc.ServiceDesc for Auth services.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Auth_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "auth.Auth",
+	ServiceName: "authsrv.Auth",
 	HandlerType: (*AuthServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

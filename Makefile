@@ -20,10 +20,10 @@ create-db-image:
 	docker run --name cifra-sso -p 5555:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -d postgres:12-alpine
 
 migrate-up:
-	migrate -path service/db/migration -database $(DB_URL) -verbose up
+	migrate -path internal/db/migration -database $(DB_URL) -verbose up
 
 migrate-down:
-	migrate -path service/db/migration -database $(DB_URL) -verbose down
+	migrate -path internal/db/migration -database $(DB_URL) -verbose down
 
 generate-sqlc:
 	sqlc generate

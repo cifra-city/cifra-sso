@@ -1,9 +1,9 @@
 version: "2"
 sql:
-  - schema: service/data/migration
-    queries: service/data/query
+  - schema: internal/db/migration
+    queries: internal/db/query
     engine: postgresql
     gen:
       go:
         package: data
-        out: service/data/data
+        out: internal/db/data

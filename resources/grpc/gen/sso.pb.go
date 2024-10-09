@@ -408,20 +408,20 @@ func file_resources_grpc_proto_sso_proto_rawDescGZIP() []byte {
 
 var file_resources_grpc_proto_sso_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_resources_grpc_proto_sso_proto_goTypes = []any{
-	(*RegisterRequest)(nil),  // 0: auth.RegisterRequest
-	(*RegisterResponse)(nil), // 1: auth.RegisterResponse
-	(*LoginRequest)(nil),     // 2: auth.LoginRequest
-	(*LoginResponse)(nil),    // 3: auth.LoginResponse
-	(*IsAdminRequest)(nil),   // 4: auth.IsAdminRequest
-	(*IsAdminResponse)(nil),  // 5: auth.IsAdminResponse
+	(*RegisterRequest)(nil),  // 0: authsrv.RegisterRequest
+	(*RegisterResponse)(nil), // 1: authsrv.RegisterResponse
+	(*LoginRequest)(nil),     // 2: authsrv.LoginRequest
+	(*LoginResponse)(nil),    // 3: authsrv.LoginResponse
+	(*IsAdminRequest)(nil),   // 4: authsrv.IsAdminRequest
+	(*IsAdminResponse)(nil),  // 5: authsrv.IsAdminResponse
 }
 var file_resources_grpc_proto_sso_proto_depIdxs = []int32{
-	0, // 0: auth.Auth.Register:input_type -> auth.RegisterRequest
-	2, // 1: auth.Auth.Login:input_type -> auth.LoginRequest
-	4, // 2: auth.Auth.IsAdmin:input_type -> auth.IsAdminRequest
-	1, // 3: auth.Auth.Register:output_type -> auth.RegisterResponse
-	3, // 4: auth.Auth.Login:output_type -> auth.LoginResponse
-	5, // 5: auth.Auth.IsAdmin:output_type -> auth.IsAdminResponse
+	0, // 0: authsrv.Auth.Register:input_type -> authsrv.RegisterRequest
+	2, // 1: authsrv.Auth.Login:input_type -> authsrv.LoginRequest
+	4, // 2: authsrv.Auth.IsAdmin:input_type -> authsrv.IsAdminRequest
+	1, // 3: authsrv.Auth.Register:output_type -> authsrv.RegisterResponse
+	3, // 4: authsrv.Auth.Login:output_type -> authsrv.LoginResponse
+	5, // 5: authsrv.Auth.IsAdmin:output_type -> authsrv.IsAdminResponse
 	3, // [3:6] is the sub-list for method output_type
 	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
