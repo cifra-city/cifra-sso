@@ -3,7 +3,7 @@
 //   sqlc v1.27.0
 // source: admins.sql
 
-package db
+package data
 
 import (
 	"context"
@@ -61,8 +61,8 @@ INSERT INTO admins (
     uid,
     name
 ) VALUES (
-             $1, $2
-         ) RETURNING id, uid, name, created_at
+     $1, $2
+) RETURNING id, uid, name, created_at
 `
 
 type InsertAdminParams struct {

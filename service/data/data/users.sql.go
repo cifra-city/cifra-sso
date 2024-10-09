@@ -3,7 +3,7 @@
 //   sqlc v1.27.0
 // source: users.sql
 
-package db
+package data
 
 import (
 	"context"
@@ -81,18 +81,16 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username sql.NullString
 
 const insertUser = `-- name: InsertUser :one
 INSERT INTO users (
-    id,
     username,
     email,
     email_status,
     pas_hash
 ) VALUES (
-             $1, $2, $3, $4, $5
-         ) RETURNING id, username, email, email_status, pas_hash, created_at
+ $1, $2, $3, $4
+) RETURNING id, username, email, email_status, pas_hash, created_at
 `
 
 type InsertUserParams struct {
-	ID          uuid.UUID
 	Username    sql.NullString
 	Email       sql.NullString
 	EmailStatus sql.NullBool
@@ -101,7 +99,6 @@ type InsertUserParams struct {
 
 func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, insertUser,
-		arg.ID,
 		arg.Username,
 		arg.Email,
 		arg.EmailStatus,

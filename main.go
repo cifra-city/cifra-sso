@@ -6,6 +6,7 @@ import (
 
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 	"github.com/cifra-city/cifra-sso/service/config"
+	"github.com/cifra-city/cifra-sso/service/data/data"
 	"github.com/cifra-city/cifra-sso/service/data/db"
 	"google.golang.org/grpc"
 
@@ -39,7 +40,7 @@ func main() {
 	logger.Info("Starting gRPC server...")
 
 	// Инициализируем подключение к базе данных.
-	conn, err := db.NewDBConnection(cfg.Database.URL)
+	conn, err := data.NewDBConnection(cfg.Database.URL)
 	if err != nil {
 		logger.Fatalf("failed to connect to the database: %v", err)
 	}

@@ -54,14 +54,13 @@ WHERE id = $1
 
 -- name: InsertUser :one
 INSERT INTO users (
-    id,
     username,
     email,
     email_status,
     pas_hash
 ) VALUES (
-             $1, $2, $3, $4, $5
-         ) RETURNING *;
+ $1, $2, $3, $4
+) RETURNING *;
 
 
 -- name: DeleteUserByID :exec
