@@ -10,4 +10,4 @@ jwt:
 
 logging:
   level: "info"                 # Уровни: "debug", "info", "warn", "error".
-  format: "json"                # Форматы: "json" или "text".
+  format: "text"                # Форматы: "json" или "text".

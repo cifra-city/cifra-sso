@@ -27,19 +27,19 @@ func NewAuthServer(queries *db.Queries) *AuthServer {
 
 func main() {
 	// Загружаем конфигурацию из config.yaml.
-	cfg, err := config.LoadConfig("")
+	cfg, err := config.LoadConfig(".")
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
 
-	log.Printf("Database URL: %s", cfg.DatabaseURL)
+	log.Printf("Database URL: %s", cfg.Database.URL)
 
 	// Настраиваем логгер.
-	logger := config.SetupLogger(cfg.LoggingLevel, cfg.LoggingFormat)
+	logger := config.SetupLogger(cfg.Logging.Level, cfg.Logging.Format)
 	logger.Info("Starting gRPC server...")
 
 	// Инициализируем подключение к базе данных.
-	conn, err := db.NewDBConnection(cfg.DatabaseURL)
+	conn, err := db.NewDBConnection(cfg.Database.URL)
 	if err != nil {
 		logger.Fatalf("failed to connect to the database: %v", err)
 	}
@@ -58,13 +58,13 @@ func main() {
 	ssov1.RegisterAuthServer(grpcServer, authServer)
 
 	// Создаем сетевой слушатель на порту, указанном в конфигурации.
-	listener, err := net.Listen("tcp", cfg.ServerPort)
+	listener, err := net.Listen("tcp", cfg.Server.Port)
 	if err != nil {
-		logger.Fatalf("failed to listen on port %s: %v", cfg.ServerPort, err)
+		logger.Fatalf("failed to listen on port %s: %v", cfg.Server.Port, err)
 	}
 
 	// Запускаем gRPC сервер.
-	logger.Infof("gRPC server is running on port %s", cfg.ServerPort)
+	logger.Infof("gRPC server is running on port %s", cfg.Server.Port)
 	if err := grpcServer.Serve(listener); err != nil {
 		logger.Fatalf("failed to serve gRPC server: %v", err)
 	}

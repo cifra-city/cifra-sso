@@ -6,14 +6,29 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Config - структура для хранения всех настроек.
-type Config struct {
-	DatabaseURL   string        `mapstructure:"url"`
-	ServerPort    string        `mapstructure:"port"`
-	JWTSecretKey  string        `mapstructure:"secret_key"`
+type DatabaseConfig struct {
+	URL string `mapstructure:"url"`
+}
+
+type ServerConfig struct {
+	Port string `mapstructure:"port"`
+}
+
+type JWTConfig struct {
+	SecretKey     string        `mapstructure:"secret_key"`
 	TokenLifetime time.Duration `mapstructure:"token_lifetime"`
-	LoggingLevel  string        `mapstructure:"level"`
-	LoggingFormat string        `mapstructure:"format"`
+}
+
+type LoggingConfig struct {
+	Level  string `mapstructure:"level"`
+	Format string `mapstructure:"format"`
+}
+
+type Config struct {
+	Database DatabaseConfig `mapstructure:"database"`
+	Server   ServerConfig   `mapstructure:"server"`
+	JWT      JWTConfig      `mapstructure:"jwt"`
+	Logging  LoggingConfig  `mapstructure:"logging"`
 }
 
 // LoadConfig - функция для загрузки конфигурации из файла.
