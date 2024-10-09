@@ -1,5 +1,5 @@
 database:
-  url: "postgresql://postgres:postgres@localhost:5444/postgres?sslmode=disable"
+  url: "postgresql://postgres:postgres@localhost:5555/postgres?sslmode=disable"
 
 server:
   port: ":50051"

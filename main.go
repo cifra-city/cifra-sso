@@ -8,6 +8,8 @@ import (
 	"github.com/cifra-city/cifra-sso/service/config"
 	"github.com/cifra-city/cifra-sso/service/data/db"
 	"google.golang.org/grpc"
+
+	_ "github.com/lib/pq"
 )
 
 // AuthServer - структура для реализации gRPC сервиса.
@@ -25,10 +27,12 @@ func NewAuthServer(queries *db.Queries) *AuthServer {
 
 func main() {
 	// Загружаем конфигурацию из config.yaml.
-	cfg, err := config.LoadConfig(".")
+	cfg, err := config.LoadConfig("")
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
 	}
+
+	log.Printf("Database URL: %s", cfg.DatabaseURL)
 
 	// Настраиваем логгер.
 	logger := config.SetupLogger(cfg.LoggingLevel, cfg.LoggingFormat)
