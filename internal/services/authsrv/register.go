@@ -3,10 +3,12 @@ package authsrv
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	"github.com/cifra-city/cifra-sso/internal/db/data"
 	"github.com/cifra-city/cifra-sso/internal/domain"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,24 +16,46 @@ import (
 
 // Register - method for registering a new user.
 func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*ssov1.RegisterResponse, error) {
-	// Validate the incoming request db.
+	log := s.Log
+
+	log.Debugf("email: %s user: %s password: %s ", in.Email, in.Username, in.Password)
 	if in.Email == "" || in.Username == "" || in.Password == "" {
 		return nil, status.Error(codes.InvalidArgument, "email, username, and password are required")
 	}
 
 	// Check password length and requirements.
+	log.Debugf("password: %s ", in.Password)
 	if len(in.Password) < 8 || !domain.HasRequiredChars(in.Password) {
 		return nil, status.Error(codes.InvalidArgument, "password must be at least 8 characters and contain uppercase, lowercase, number, and special character")
 	}
 
-	// Hash the password using bcrypt.
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(in.Password), bcrypt.DefaultCost)
 	if err != nil {
+		log.Debugf("error hashing password: %v", err)
 		return nil, status.Error(codes.Internal, "failed to hash password")
 	}
 
+	_, err = s.Queries.GetUserByEmail(ctx, domain.ToNullString(in.Email))
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, status.Error(codes.Internal, "Error getting user by email")
+	}
+	if err == nil {
+		return nil, status.Error(codes.AlreadyExists, "This email address already exists")
+	}
+
+	_, err = s.Queries.GetUserByUsername(ctx, domain.ToNullString(in.Username))
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, status.Error(codes.Internal, "Error getting user by username")
+	}
+	if err == nil {
+		return nil, status.Error(codes.AlreadyExists, "This username already exists")
+	}
+
+	newUserID := uuid.New()
+
 	// Prepare the parameters for inserting a new user.
 	params := data.InsertUserParams{
+		ID:          newUserID,
 		Username:    sql.NullString{String: in.Username, Valid: true},
 		Email:       sql.NullString{String: in.Email, Valid: true},
 		EmailStatus: sql.NullBool{Bool: false, Valid: true}, // Default email status to false.
@@ -41,9 +65,10 @@ func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*
 	// Insert the new user into the database.
 	user, err := s.Queries.InsertUser(ctx, params)
 	if err != nil {
+		log.Infof("error inserting user: %v", err)
 		return nil, status.Error(codes.Internal, "failed to create user")
 	}
 
-	// Return the ID of the created user in the response.
+	log.Infof("user created: %v", user)
 	return &ssov1.RegisterResponse{UserId: user.ID.String()}, nil
 }

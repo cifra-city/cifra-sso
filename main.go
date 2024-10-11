@@ -6,7 +6,7 @@ import (
 
 	"github.com/cifra-city/cifra-sso/internal/config"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
-	authsrv "github.com/cifra-city/cifra-sso/internal/services/authsrv"
+	"github.com/cifra-city/cifra-sso/internal/services/authsrv"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 	"google.golang.org/grpc"
 
@@ -34,7 +34,7 @@ func main() {
 	queries := data.New(conn)
 
 	// Create the AuthServer with the necessary dependencies.
-	authServer := authsrv.NewAuthServer(queries, cfg)
+	authServer := authsrv.NewAuthServer(queries, cfg, logger)
 
 	// Create a new gRPC server.
 	grpcServer := grpc.NewServer()

@@ -9,5 +9,5 @@ jwt:
   token_lifetime: 3600          # Время жизни токена в секундах (например, 1 час).
 
 logging:
-  level: "info"                 # Уровни: "debug", "info", "warn", "error".
+  level: "debug"                 # Уровни: "debug", "info", "warn", "error".
   format: "text"                # Форматы: "json" или "text".

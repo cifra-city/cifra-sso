@@ -17,7 +17,7 @@ service Auth {
 message RegisterRequest {
    string email = 1; // at next version, this will be optional
    string username = 2;
-   string password = 3;
+   string password = 3; // Test$7777 for example
 }
 
 // Response for register new user, user_id is the id of the new user

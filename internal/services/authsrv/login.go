@@ -23,42 +23,62 @@ func (s *AuthServer) Login(ctx context.Context, in *ssov1.LoginRequest) (*ssov1.
 	username := domain.ToNullString(in.Username)
 	password := domain.ToNullString(in.Password)
 
+	log := s.Log
 	// Validate the incoming request data.
 	if !email.Valid && !username.Valid {
+		log.Debugf("email or username are missing")
 		return nil, status.Error(codes.InvalidArgument, "email or username is required")
 	}
 	if !password.Valid {
+		log.Debugf("password is missing")
 		return nil, status.Error(codes.InvalidArgument, "password is required")
 	}
 
 	// Fetch the user from the database.
 	var user data.User
 	var err error
-	if email.Valid {
+	if email.Valid && username.Valid {
 		user, err = s.Queries.GetUserByEmail(ctx, email)
-	} else {
-		user, err = s.Queries.GetUserByUsername(ctx, username)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, status.Error(codes.NotFound, "user not found")
+			}
+			return nil, status.Error(codes.Internal, "error getting user")
+		}
+		if user, err = s.Queries.GetUserByUsername(ctx, username); err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, status.Error(codes.NotFound, "user not found")
+			}
+			return nil, status.Error(codes.Internal, "error getting user")
+		}
 	}
 
+	//TODO add logic for proof email by sending list with code
+
 	if errors.Is(err, sql.ErrNoRows) {
+		log.Debugf("User not found %s", username.String)
 		return nil, status.Error(codes.Unauthenticated, "user not found")
 	} else if err != nil {
+		log.Debugf("Error getting user %s", err)
 		return nil, status.Error(codes.Internal, "failed to retrieve user")
 	}
 
 	// Compare the provided password with the stored hashed password.
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasHash.String), []byte(password.String))
 	if err != nil {
+		log.Debugf("Incorect password for user: %s", user.Username.String)
 		return nil, status.Error(codes.Unauthenticated, "invalid password")
 	}
 
 	// Generate a JWT token.
 	token, err := s.generateJWT(user.ID)
 	if err != nil {
+		log.Error("Error creating jwt token %s", err)
 		return nil, status.Error(codes.Internal, "failed to generate token")
 	}
 
 	// Return the token in the response.
+	log.Infof("Successfully logged in user %s", user.Username.String)
 	return &ssov1.LoginResponse{Token: token}, nil
 }
 
