@@ -8,7 +8,9 @@ option go_package = "github.com/cifra-city/cifra-sso;ssov1";
 service Auth {
   rpc Register(RegisterRequest) returns (RegisterResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
   rpc IsAdmin(IsAdminRequest) returns (IsAdminResponse);
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
 }
 
 // Request for register new user, email and username must be unique, password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number and one special character
@@ -44,4 +46,18 @@ message IsAdminRequest {
 // Response for checking if user is admin, is_admin is true if user is admin
 message IsAdminResponse {
   bool is_admin = 1;
+}
+
+message LogoutRequest {}
+
+message LogoutResponse {
+  string message = 1;
+}
+
+message GetUserRequest {}
+
+message GetUserResponse {
+  string user_id = 1;
+  string username = 2;
+  string email = 3;
 }

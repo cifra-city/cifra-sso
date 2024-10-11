@@ -34,7 +34,7 @@ func main() {
 	queries := data.New(conn)
 
 	// Create the AuthServer with the necessary dependencies.
-	authServer := authsrv.NewAuthServer(queries, nil)
+	authServer := authsrv.NewAuthServer(queries, cfg)
 
 	// Create a new gRPC server.
 	grpcServer := grpc.NewServer()

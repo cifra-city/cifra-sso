@@ -3,6 +3,7 @@ package authsrv
 import (
 	"context"
 
+	"github.com/cifra-city/cifra-sso/internal/config"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 )
@@ -10,15 +11,16 @@ import (
 // AuthServer - structure for implementing the gRPC service.
 type AuthServer struct {
 	ssov1.UnimplementedAuthServer
-	Queries     *data.Queries
-	AuthService AuthService // Interface for handling authentication methods.
+	Queries *data.Queries
+	AuthService
+	Config *config.Config // Interface for handling authentication methods.
 }
 
 // NewAuthServer create new AuthServer.
-func NewAuthServer(queries *data.Queries, authService AuthService) *AuthServer {
+func NewAuthServer(queries *data.Queries, cfg *config.Config) *AuthServer {
 	return &AuthServer{
-		Queries:     queries,
-		AuthService: authService,
+		Queries: queries,
+		Config:  cfg,
 	}
 }
 
