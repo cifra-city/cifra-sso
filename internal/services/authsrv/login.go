@@ -43,12 +43,14 @@ func (s *AuthServer) Login(ctx context.Context, in *ssov1.LoginRequest) (*ssov1.
 			if errors.Is(err, sql.ErrNoRows) {
 				return nil, status.Error(codes.NotFound, "user not found")
 			}
+			log.Errorf("Error %s", err)
 			return nil, status.Error(codes.Internal, "error getting user")
 		}
 		if user, err = s.Queries.GetUserByUsername(ctx, username); err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return nil, status.Error(codes.NotFound, "user not found")
 			}
+			log.Errorf("error is %s", err)
 			return nil, status.Error(codes.Internal, "error getting user")
 		}
 	}
@@ -56,29 +58,29 @@ func (s *AuthServer) Login(ctx context.Context, in *ssov1.LoginRequest) (*ssov1.
 	//TODO add logic for proof email by sending list with code
 
 	if errors.Is(err, sql.ErrNoRows) {
-		log.Debugf("User not found %s", username.String)
+		log.Debugf("user not found %s", username.String)
 		return nil, status.Error(codes.Unauthenticated, "user not found")
 	} else if err != nil {
-		log.Debugf("Error getting user %s", err)
+		log.Debugf("error getting user %s", err)
 		return nil, status.Error(codes.Internal, "failed to retrieve user")
 	}
 
 	// Compare the provided password with the stored hashed password.
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasHash.String), []byte(password.String))
 	if err != nil {
-		log.Debugf("Incorect password for user: %s", user.Username.String)
+		log.Debugf("incorect password for user: %s", user.Username.String)
 		return nil, status.Error(codes.Unauthenticated, "invalid password")
 	}
 
 	// Generate a JWT token.
 	token, err := s.generateJWT(user.ID)
 	if err != nil {
-		log.Error("Error creating jwt token %s", err)
+		log.Error("error creating jwt token %s", err)
 		return nil, status.Error(codes.Internal, "failed to generate token")
 	}
 
 	// Return the token in the response.
-	log.Infof("Successfully logged in user %s", user.Username.String)
+	log.Infof("successfully logged in user %s", user.Username.String)
 	return &ssov1.LoginResponse{Token: token}, nil
 }
 

@@ -6,16 +6,18 @@ import (
 	"github.com/cifra-city/cifra-sso/internal/config"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
 // AuthServer - structure for implementing the gRPC service.
 type AuthServer struct {
-	ssov1.UnimplementedAuthServer
 	Queries *data.Queries
+	Config  *config.Config // Interface for handling authentication methods.
+	Log     *logrus.Logger
+
+	ssov1.UnimplementedAuthServer
 	AuthService
-	Config *config.Config // Interface for handling authentication methods.
-	Log    *logrus.Logger
 }
 
 // NewAuthServer create new AuthServer.
@@ -32,4 +34,8 @@ type AuthService interface {
 	Register(ctx context.Context, in *ssov1.RegisterRequest) (*ssov1.RegisterResponse, error)
 	Login(ctx context.Context, in *ssov1.LoginRequest) (*ssov1.LoginResponse, error)
 	IsAdmin(ctx context.Context, in *ssov1.IsAdminRequest) (*ssov1.IsAdminResponse, error)
+	GetUser(ctx context.Context, in *ssov1.GetUserRequest) (*ssov1.GetUserResponse, error)
+	Logout(ctx context.Context, in *ssov1.LogoutRequest) (*ssov1.LogoutResponse, error)
+	Authenticate(ctx context.Context) (uuid.UUID, error)
+	CreateAdmin(ctx context.Context, in *ssov1.CreateAdminRequest) (*ssov1.CreateAdminResponse, error)
 }

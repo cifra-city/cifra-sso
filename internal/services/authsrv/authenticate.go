@@ -3,6 +3,7 @@ package authsrv
 import (
 	"context"
 
+	"github.com/cifra-city/cifra-sso/internal/domain"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -11,9 +12,11 @@ import (
 
 // Authenticate validates the JWT token and returns the user ID if valid.
 func (s *AuthServer) Authenticate(ctx context.Context) (uuid.UUID, error) {
-	tokenString, err := extractToken(ctx)
+	log := s.Log
+	tokenString, err := domain.ExtractToken(ctx)
 	if err != nil {
-		return uuid.Nil, err
+		log.Infof("error extracting token: %v", err)
+		return uuid.Nil, status.Error(codes.Internal, "Error extracting token")
 	}
 
 	// Parse and validate the JWT token.

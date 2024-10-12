@@ -21,7 +21,6 @@ func (s *AuthServer) IsAdmin(ctx context.Context, in *ssov1.IsAdminRequest) (*ss
 	if !ID.Valid {
 		return nil, status.Error(codes.InvalidArgument, "invalid user id")
 	}
-
 	// Use the userID to check if the user is an admin.
 	_, err = s.Queries.GetAdminByUID(ctx, ID)
 	if err != nil {

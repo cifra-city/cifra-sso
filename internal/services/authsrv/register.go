@@ -37,6 +37,7 @@ func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*
 
 	_, err = s.Queries.GetUserByEmail(ctx, domain.ToNullString(in.Email))
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		log.Errorf("error getting user by email: %v", err)
 		return nil, status.Error(codes.Internal, "Error getting user by email")
 	}
 	if err == nil {
@@ -45,6 +46,7 @@ func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*
 
 	_, err = s.Queries.GetUserByUsername(ctx, domain.ToNullString(in.Username))
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		log.Errorf("error getting user by username: %v", err)
 		return nil, status.Error(codes.Internal, "Error getting user by username")
 	}
 	if err == nil {

@@ -1,4 +1,4 @@
-package authsrv
+package domain
 
 import (
 	"context"
@@ -9,8 +9,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// extractToken extracts the JWT token from the gRPC metadata.
-func extractToken(ctx context.Context) (string, error) {
+// ExtractToken extracts the JWT token from the gRPC metadata.
+func ExtractToken(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return "", status.Error(codes.Unauthenticated, "missing metadata")

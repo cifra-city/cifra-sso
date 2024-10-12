@@ -4,7 +4,7 @@ DOC_DIR=docs
 
 DB_URL=postgresql://postgres:postgres@localhost:5555/postgres?sslmode=disable
 
-generate-grpc: create-gen-dir
+generate-proto: create-gen-dir
 	protoc --go_out=$(GEN_DIR) --go-grpc_out=$(GEN_DIR) --go_opt=M$(PROTO_DIR)/sso.proto=./ --go-grpc_opt=M$(PROTO_DIR)/sso.proto=./ --go_opt=paths=import --go-grpc_opt=paths=import $(PROTO_DIR)/sso.proto
 
 create-gen-dir:

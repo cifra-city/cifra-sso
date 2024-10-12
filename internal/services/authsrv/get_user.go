@@ -12,9 +12,11 @@ import (
 
 // GetUser - method for retrieving user information based on JWT.
 func (s *AuthServer) GetUser(ctx context.Context, in *ssov1.GetUserRequest) (*ssov1.GetUserResponse, error) {
+	log := s.Log
+
 	userID, err := s.Authenticate(ctx)
 	if err != nil {
-		return nil, err //Token not found
+		return nil, err
 	}
 
 	// Get info about user from db
@@ -22,6 +24,7 @@ func (s *AuthServer) GetUser(ctx context.Context, in *ssov1.GetUserRequest) (*ss
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, status.Error(codes.NotFound, "user not found")
 	} else if err != nil {
+		log.Errorf("error getting user: %v", err)
 		return nil, status.Error(codes.Internal, "failed to retrieve user")
 	}
 

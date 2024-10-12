@@ -11,6 +11,7 @@ service Auth {
   rpc Logout(LogoutRequest) returns (LogoutResponse);
   rpc IsAdmin(IsAdminRequest) returns (IsAdminResponse);
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc CreateAdmin(CreateAdminRequest) returns (CreateAdminResponse);
 }
 
 // Request for register new user, email and username must be unique, password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number and one special character
@@ -60,4 +61,13 @@ message GetUserResponse {
   string user_id = 1;
   string username = 2;
   string email = 3;
+}
+
+message CreateAdminRequest {
+  string username = 1;
+  string name = 2; //Title or note for this admin who is it?
+}
+
+message CreateAdminResponse {
+  int32 id = 1;
 }
