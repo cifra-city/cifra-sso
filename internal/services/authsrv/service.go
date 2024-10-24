@@ -31,7 +31,14 @@ func NewAuthServer(queries *data.Queries, cfg *config.Config, log *logrus.Logger
 
 // AuthService defines the methods for user authentication and authorization.
 type AuthService interface {
+	Authenticate(ctx context.Context) (uuid.UUID, error)
+
 	Register(ctx context.Context, in *ssov1.RegisterRequest) (*ssov1.Empty, error)
 	Login(ctx context.Context, in *ssov1.LoginRequest) (*ssov1.LoginResponse, error)
-	Authenticate(ctx context.Context) (uuid.UUID, error)
+	Logout(ctx context.Context, in *ssov1.Empty) (*ssov1.Empty, error)
+
+	ChangePassword(ctx context.Context, in *ssov1.ChangePasswordRequest) (*ssov1.Empty, error)
+	ChangeUsername(ctx context.Context, in *ssov1.ChangeUsernameRequest) (*ssov1.Empty, error)
+	ChangeEmail(ctx context.Context, in *ssov1.ChangeEmailRequest) (*ssov1.Empty, error)
+	UpdateEmailStatus(ctx context.Context, in *ssov1.ChangeEmailStatusRequest) (*ssov1.Empty, error)
 }

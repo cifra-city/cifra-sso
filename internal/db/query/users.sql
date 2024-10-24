@@ -50,8 +50,12 @@ SET pass_hash = $2
 WHERE id = $1
     RETURNING *;
 
+-- name: UpdateEmailByID :one
+UPDATE users_secret
+SET email = $2
+WHERE id = $1
+    RETURNING *;
 
--- name: InsertUser :one
 -- name: InsertUser :one
 INSERT INTO users_secret (
     id,

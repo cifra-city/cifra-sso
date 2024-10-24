@@ -5,17 +5,8 @@
 package data
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 )
-
-type Admin struct {
-	ID        int32
-	Username  string
-	Name      string
-	CreatedAt time.Time
-}
 
 type UsersSecret struct {
 	ID          uuid.UUID
