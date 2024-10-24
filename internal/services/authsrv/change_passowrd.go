@@ -37,6 +37,8 @@ func (s *AuthServer) ChangePassword(ctx context.Context, in *ssov1.ChangePasswor
 		return nil, status.Error(codes.Internal, "Server Error")
 	}
 
+	//TODO add auth email
+
 	stmt := data.UpdatePasswordByIDParams{
 		ID:       userID,
 		PassHash: string(newpassword),

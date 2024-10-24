@@ -31,6 +31,8 @@ func (s *AuthServer) ChangeUsername(ctx context.Context, in *ssov1.ChangeUsernam
 		return nil, status.Error(codes.Unauthenticated, "invalid password")
 	}
 
+	//TODO add auth email
+
 	stmt := data.UpdateUsernameByIDParams{
 		Username: user.Username,
 		ID:       userID,

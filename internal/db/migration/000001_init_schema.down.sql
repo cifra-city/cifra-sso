@@ -1,2 +1,1 @@
-DROP TABLE IF EXISTS admins;
 DROP TABLE IF EXISTS users_secret;

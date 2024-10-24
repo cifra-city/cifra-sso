@@ -24,6 +24,8 @@ func (s *AuthServer) ChangeEmailStatus(ctx context.Context, in *ssov1.ChangeEmai
 		return nil, status.Error(codes.Internal, "failed to retrieve user")
 	}
 
+	//TODO add auth email
+
 	stmt := data.UpdateEmailStatusByIDParams{
 		ID:          userID,
 		EmailStatus: in.EmailStatus,

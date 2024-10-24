@@ -38,6 +38,8 @@ func (s *AuthServer) ChangeEmail(ctx context.Context, in *ssov1.ChangeEmailReque
 		return nil, status.Error(codes.PermissionDenied, "permission denied")
 	}
 
+	//TODO add auth email
+
 	stmt := data.UpdateEmailByIDParams{
 		ID:    userID,
 		Email: in.NewEmail,
