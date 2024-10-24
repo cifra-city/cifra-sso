@@ -5,23 +5,22 @@
 package data
 
 import (
-	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type Admin struct {
 	ID        int32
-	Uid       uuid.NullUUID
-	Name      sql.NullString
-	CreatedAt sql.NullTime
+	Username  string
+	Name      string
+	CreatedAt time.Time
 }
 
-type User struct {
+type UsersSecret struct {
 	ID          uuid.UUID
-	Username    sql.NullString
-	Email       sql.NullString
-	EmailStatus sql.NullBool
-	PasHash     sql.NullString
-	CreatedAt   sql.NullTime
+	Username    string
+	Email       string
+	EmailStatus bool
+	PassHash    string
 }

@@ -1,17 +1,10 @@
-CREATE TABLE users (
-    "id" uuid PRIMARY KEY,
-    "username" varchar UNIQUE,
-    "email" varchar UNIQUE,
-    "email_status" boolean DEFAULT false,
-    "pas_hash" varchar,
-    "created_at" timestamp DEFAULT (now())
+CREATE TABLE "users_secret"(
+    "id" UUID NOT NULL PRIMARY KEY,
+    "username" VARCHAR(255) NOT NULL UNIQUE,
+    "email" VARCHAR(255) NOT NULL UNIQUE,
+    "email_status" BOOLEAN NOT NULL,
+    "pass_hash" VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE admins (
-    "id" integer PRIMARY KEY,
-    "uid" uuid,
-    "name" varchar,
-    "created_at" timestamp DEFAULT (now())
-);
-
-ALTER TABLE admins ADD FOREIGN KEY ("uid") REFERENCES users ("id");
+CREATE INDEX "user_public_username_index" ON "user_secret"("username");
+CREATE INDEX "user_public_email_index" ON "user_secret"("email");

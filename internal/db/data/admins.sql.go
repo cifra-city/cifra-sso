@@ -7,9 +7,6 @@ package data
 
 import (
 	"context"
-	"database/sql"
-
-	"github.com/google/uuid"
 )
 
 const deleteAdminByID = `-- name: DeleteAdminByID :exec
@@ -23,7 +20,7 @@ func (q *Queries) DeleteAdminByID(ctx context.Context, id int32) error {
 }
 
 const getAdminByID = `-- name: GetAdminByID :one
-SELECT id, uid, name, created_at FROM admins
+SELECT id, username, name, created_at FROM admins
 WHERE id = $1 LIMIT 1
 `
 
@@ -32,24 +29,24 @@ func (q *Queries) GetAdminByID(ctx context.Context, id int32) (Admin, error) {
 	var i Admin
 	err := row.Scan(
 		&i.ID,
-		&i.Uid,
+		&i.Username,
 		&i.Name,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
-const getAdminByUID = `-- name: GetAdminByUID :one
-SELECT id, uid, name, created_at FROM admins
-WHERE uid = $1 LIMIT 1
+const getAdminByUsername = `-- name: GetAdminByUsername :one
+SELECT id, username, name, created_at FROM admins
+WHERE username = $1 LIMIT 1
 `
 
-func (q *Queries) GetAdminByUID(ctx context.Context, uid uuid.NullUUID) (Admin, error) {
-	row := q.db.QueryRowContext(ctx, getAdminByUID, uid)
+func (q *Queries) GetAdminByUsername(ctx context.Context, username string) (Admin, error) {
+	row := q.db.QueryRowContext(ctx, getAdminByUsername, username)
 	var i Admin
 	err := row.Scan(
 		&i.ID,
-		&i.Uid,
+		&i.Username,
 		&i.Name,
 		&i.CreatedAt,
 	)
@@ -58,24 +55,24 @@ func (q *Queries) GetAdminByUID(ctx context.Context, uid uuid.NullUUID) (Admin, 
 
 const insertAdmin = `-- name: InsertAdmin :one
 INSERT INTO admins (
-    uid,
+    username,
     name
 ) VALUES (
      $1, $2
-) RETURNING id, uid, name, created_at
+) RETURNING id, username, name, created_at
 `
 
 type InsertAdminParams struct {
-	Uid  uuid.NullUUID
-	Name sql.NullString
+	Username string
+	Name     string
 }
 
 func (q *Queries) InsertAdmin(ctx context.Context, arg InsertAdminParams) (Admin, error) {
-	row := q.db.QueryRowContext(ctx, insertAdmin, arg.Uid, arg.Name)
+	row := q.db.QueryRowContext(ctx, insertAdmin, arg.Username, arg.Name)
 	var i Admin
 	err := row.Scan(
 		&i.ID,
-		&i.Uid,
+		&i.Username,
 		&i.Name,
 		&i.CreatedAt,
 	)
@@ -83,7 +80,7 @@ func (q *Queries) InsertAdmin(ctx context.Context, arg InsertAdminParams) (Admin
 }
 
 const listAdmins = `-- name: ListAdmins :many
-SELECT id, uid, name, created_at FROM admins
+SELECT id, username, name, created_at FROM admins
 ORDER BY created_at
 `
 
@@ -98,7 +95,7 @@ func (q *Queries) ListAdmins(ctx context.Context) ([]Admin, error) {
 		var i Admin
 		if err := rows.Scan(
 			&i.ID,
-			&i.Uid,
+			&i.Username,
 			&i.Name,
 			&i.CreatedAt,
 		); err != nil {
@@ -119,23 +116,23 @@ const updateAdminByID = `-- name: UpdateAdminByID :one
 UPDATE admins
 SET
     name = $2,
-    uid = $3
+    username = $3
 WHERE id = $1
-    RETURNING id, uid, name, created_at
+    RETURNING id, username, name, created_at
 `
 
 type UpdateAdminByIDParams struct {
-	ID   int32
-	Name sql.NullString
-	Uid  uuid.NullUUID
+	ID       int32
+	Name     string
+	Username string
 }
 
 func (q *Queries) UpdateAdminByID(ctx context.Context, arg UpdateAdminByIDParams) (Admin, error) {
-	row := q.db.QueryRowContext(ctx, updateAdminByID, arg.ID, arg.Name, arg.Uid)
+	row := q.db.QueryRowContext(ctx, updateAdminByID, arg.ID, arg.Name, arg.Username)
 	var i Admin
 	err := row.Scan(
 		&i.ID,
-		&i.Uid,
+		&i.Username,
 		&i.Name,
 		&i.CreatedAt,
 	)

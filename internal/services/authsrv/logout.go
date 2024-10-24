@@ -7,9 +7,7 @@ import (
 )
 
 // Logout - method for user logout, clears the JWT cookie.
-func (s *AuthServer) Logout(ctx context.Context, in *ssov1.LogoutRequest) (*ssov1.LogoutResponse, error) {
+func (s *AuthServer) Logout(ctx context.Context, in *ssov1.Empty) (*ssov1.Empty, error) {
 	s.Log.Infof("user with %s success logout fron device", in.String())
-	return &ssov1.LogoutResponse{
-		Message: "Logout successful",
-	}, nil
+	return &ssov1.Empty{}, nil
 }

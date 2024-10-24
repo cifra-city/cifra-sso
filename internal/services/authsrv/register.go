@@ -15,7 +15,7 @@ import (
 )
 
 // Register - method for registering a new user.
-func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*ssov1.RegisterResponse, error) {
+func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*ssov1.Empty, error) {
 	log := s.Log
 
 	log.Debugf("email: %s user: %s password: %s ", in.Email, in.Username, in.Password)
@@ -35,7 +35,7 @@ func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*
 		return nil, status.Error(codes.Internal, "failed to hash password")
 	}
 
-	_, err = s.Queries.GetUserByEmail(ctx, domain.ToNullString(in.Email))
+	_, err = s.Queries.GetUserByEmail(ctx, in.Email)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		log.Errorf("error getting user by email: %v", err)
 		return nil, status.Error(codes.Internal, "Error getting user by email")
@@ -44,7 +44,7 @@ func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*
 		return nil, status.Error(codes.AlreadyExists, "This email address already exists")
 	}
 
-	_, err = s.Queries.GetUserByUsername(ctx, domain.ToNullString(in.Username))
+	_, err = s.Queries.GetUserByUsername(ctx, in.Username)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		log.Errorf("error getting user by username: %v", err)
 		return nil, status.Error(codes.Internal, "Error getting user by username")
@@ -58,10 +58,10 @@ func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*
 	// Prepare the parameters for inserting a new user.
 	params := data.InsertUserParams{
 		ID:          newUserID,
-		Username:    sql.NullString{String: in.Username, Valid: true},
-		Email:       sql.NullString{String: in.Email, Valid: true},
-		EmailStatus: sql.NullBool{Bool: false, Valid: true}, // Default email status to false.
-		PasHash:     sql.NullString{String: string(hashedPassword), Valid: true},
+		Username:    in.Username,
+		Email:       in.Email,
+		EmailStatus: false,
+		PassHash:    string(hashedPassword),
 	}
 
 	// Insert the new user into the database.
@@ -72,5 +72,5 @@ func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*
 	}
 
 	log.Infof("user created: %v", user)
-	return &ssov1.RegisterResponse{UserId: user.ID.String()}, nil
+	return &ssov1.Empty{}, nil
 }
