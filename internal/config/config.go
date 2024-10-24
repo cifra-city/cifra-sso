@@ -24,11 +24,19 @@ type LoggingConfig struct {
 	Format string `mapstructure:"format"`
 }
 
+type EmailConfig struct {
+	Password string `mapstructure:"password"`
+	Address  string `mapstructure:"address"`
+	smtpHost string `mapstructure:"smtp_host"`
+	smtpPort string `mapstructure:"smtp_port"`
+}
+
 type Config struct {
 	Database DatabaseConfig `mapstructure:"database"`
 	Server   ServerConfig   `mapstructure:"server"`
 	JWT      JWTConfig      `mapstructure:"jwt"`
 	Logging  LoggingConfig  `mapstructure:"logging"`
+	Email    EmailConfig    `mapstructure:"email_onfig"`
 }
 
 // LoadConfig - функция для загрузки конфигурации из файла.

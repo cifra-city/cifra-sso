@@ -11,3 +11,9 @@ jwt:
 logging:
   level: "debug"                 # Уровни: "debug", "info", "warn", "error".
   format: "text"                # Форматы: "json" или "text".
+
+email:
+  password: "example"
+  address: "example@gmail.com"
+  smtp_host: "smtp.gmail.com"
+  smtp_port: "587"

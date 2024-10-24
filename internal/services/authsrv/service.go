@@ -5,6 +5,7 @@ import (
 
 	"github.com/cifra-city/cifra-sso/internal/config"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
+	"github.com/cifra-city/cifra-sso/internal/email"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -15,6 +16,7 @@ type AuthServer struct {
 	Queries *data.Queries
 	Config  *config.Config // Interface for handling authentication methods.
 	Log     *logrus.Logger
+	Email   email.Mailman
 
 	ssov1.UnimplementedAuthServer
 	AuthService
@@ -26,6 +28,7 @@ func NewAuthServer(queries *data.Queries, cfg *config.Config, log *logrus.Logger
 		Queries: queries,
 		Config:  cfg,
 		Log:     log,
+		Email:   *email.NewMailman(cfg, log),
 	}
 }
 
