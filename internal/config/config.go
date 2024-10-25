@@ -27,8 +27,8 @@ type LoggingConfig struct {
 type EmailConfig struct {
 	Password string `mapstructure:"password"`
 	Address  string `mapstructure:"address"`
-	smtpHost string `mapstructure:"smtp_host"`
-	smtpPort string `mapstructure:"smtp_port"`
+	SmtpHost string `mapstructure:"smtp_host"`
+	SmtpPort string `mapstructure:"smtp_port"`
 }
 
 type Config struct {
@@ -52,7 +52,7 @@ func LoadConfig(path string) (*Config, error) {
 
 	var config Config
 
-	// Декодируем конфигурацию в структуру Config.
+	// Декодируем конфигурацию в структуру Cfg.
 	if err := viper.Unmarshal(&config); err != nil {
 		return nil, err
 	}

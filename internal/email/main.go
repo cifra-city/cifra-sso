@@ -8,7 +8,7 @@ import (
 )
 
 type Mailman struct {
-	Config        *config.Config
+	Cfg           *config.Config
 	Log           *logrus.Logger
 	mu            *sync.Mutex
 	emailListCode map[string]string
@@ -16,7 +16,7 @@ type Mailman struct {
 
 func NewMailman(cfg *config.Config, log *logrus.Logger) *Mailman {
 	return &Mailman{
-		Config:        cfg,
+		Cfg:           cfg,
 		Log:           log,
 		mu:            &sync.Mutex{},
 		emailListCode: make(map[string]string),

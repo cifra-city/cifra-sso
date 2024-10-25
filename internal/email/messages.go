@@ -3,6 +3,7 @@ package email
 import (
 	"crypto/rand"
 	"fmt"
+	"strconv"
 	"time"
 
 	"gopkg.in/gomail.v2"
@@ -37,13 +38,18 @@ func (m *Mailman) CheckInEmailList(username string, code string) bool {
 func (m *Mailman) SendConfirmationEmail(to string, code string) error {
 	mes := gomail.NewMessage()
 
-	mes.SetHeader("From", "testemail1488@proton.me")
+	mes.SetHeader("From", m.Cfg.Email.Address)
 	mes.SetHeader("To", to)
 	mes.SetHeader("Subject", "Email Confirmation")
 
 	mes.SetBody("text/plain", fmt.Sprintf("Your confirmation code: %s", code))
 
-	d := gomail.NewDialer("smtp.example.com", 587, "testemail1488@proton.me", "=APWBAz-%6MCzxz")
+	smtpPort, err := strconv.Atoi(m.Cfg.Email.SmtpPort)
+	if err != nil {
+		m.Log.Fatalf("Invalid SMTP port: %v", err)
+	}
+
+	d := gomail.NewDialer(m.Cfg.Email.SmtpHost, smtpPort, m.Cfg.Email.Address, m.Cfg.Email.Password)
 
 	if err := d.DialAndSend(mes); err != nil {
 		return err
