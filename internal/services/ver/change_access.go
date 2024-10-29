@@ -1,4 +1,4 @@
-package authsrv
+package auth
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 )
 
+// AccessForChanges is a method that adds a user to the event list
 func (s *AuthServer) AccessForChanges(ctx context.Context, in *ssov1.AccessReq) (*ssov1.AccessResp, error) {
 	log := s.Log
 
@@ -21,12 +22,14 @@ func (s *AuthServer) AccessForChanges(ctx context.Context, in *ssov1.AccessReq) 
 		return nil, err
 	}
 
-	if s.Email.CheckInEmailList(userDB.Username, in.Code) {
+	if !s.Email.CheckInEmailList(userDB.Username, in.Code) {
 		log.Infof("Users code is incorect: %s", err)
 		return nil, err
 	}
 
-	return &ssov1.AccessResp{
-		Link: "link TODO",
-	}, nil
+	s.Events.AddToQueue(userDB.Username, in.Eve.String())
+
+	log.Infof("Add user %s to event list %s", userDB.Username, in.Eve.String())
+
+	return &ssov1.AccessResp{}, nil
 }

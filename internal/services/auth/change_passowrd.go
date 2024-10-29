@@ -12,10 +12,14 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *AuthServer) ChangePassword(ctx context.Context, in *ssov1.ChangePasswordRequest) (*ssov1.Empty, error) {
+func (s *AuthServer) ChangePassword(ctx context.Context, in *ssov1.ChangePassReq) (*ssov1.Empty, error) {
 	log := s.Log
 
 	userID, err := s.Authenticate(ctx)
+	if err != nil {
+		log.Error("Error getting user from JWT-token: %s", err)
+		return nil, status.Error(codes.Unauthenticated, "invalid token")
+	}
 
 	user, err := s.Queries.GetUserByID(ctx, userID)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -25,23 +29,25 @@ func (s *AuthServer) ChangePassword(ctx context.Context, in *ssov1.ChangePasswor
 		return nil, status.Error(codes.Internal, "failed to retrieve user")
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.PassHash), []byte(in.OldPassword))
+	eve, err := s.Events.GetEvent(user.Username)
 	if err != nil {
-		log.Debugf("incorect password for user: %s", user.Username)
-		return nil, status.Error(codes.Unauthenticated, "invalid password")
+		log.Errorf("error checking in queue: %v", err)
+		return nil, status.Error(codes.Internal, "failed to check in queue")
+	}
+	if eve != CHANGE_PASS {
+		log.Errorf("user %s is not in the change passwoed queue", user.Username)
+		return nil, status.Error(codes.PermissionDenied, "user is not in the change email password")
 	}
 
-	newpassword, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.DefaultCost)
+	newPassword, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
 		log.Errorf("error generating new password for user: %s", user.Username)
 		return nil, status.Error(codes.Internal, "Server Error")
 	}
 
-	//TODO add auth email
-
 	stmt := data.UpdatePasswordByIDParams{
 		ID:       userID,
-		PassHash: string(newpassword),
+		PassHash: string(newPassword),
 	}
 
 	_, err = s.Queries.UpdatePasswordByID(ctx, stmt)

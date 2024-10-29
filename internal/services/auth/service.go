@@ -12,6 +12,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// DefaultPasswordLength - default password length.
+const (
+	CHANGE_EMAIL    = "CHANGE_EMAIL"
+	CHANGE_PASS     = "CHANGE_PASS"
+	CHANGE_USERNAME = "CHANGE_USERNAME"
+	CONFIRM_EMAIL   = "CONFIRM_EMAIL"
+)
+
 // AuthServer - structure for implementing the gRPC service.
 type AuthServer struct {
 	Queries *data.Queries
@@ -38,12 +46,14 @@ func NewAuthServer(queries *data.Queries, cfg *config.Config, log *logrus.Logger
 type AuthService interface {
 	Authenticate(ctx context.Context) (uuid.UUID, error)
 
-	Register(ctx context.Context, in *ssov1.RegisterRequest) (*ssov1.Empty, error)
-	Login(ctx context.Context, in *ssov1.LoginRequest) (*ssov1.LoginResponse, error)
+	Register(ctx context.Context, in *ssov1.RegisterReq) (*ssov1.Empty, error)
+	Login(ctx context.Context, in *ssov1.LoginReq) (*ssov1.LoginResp, error)
 	Logout(ctx context.Context, in *ssov1.Empty) (*ssov1.Empty, error)
 
-	ChangePassword(ctx context.Context, in *ssov1.ChangePasswordRequest) (*ssov1.Empty, error)
-	ChangeUsername(ctx context.Context, in *ssov1.ChangeUsernameRequest) (*ssov1.Empty, error)
-	ChangeEmail(ctx context.Context, in *ssov1.ChangeEmailRequest) (*ssov1.Empty, error)
-	UpdateEmailStatus(ctx context.Context, in *ssov1.ChangeEmailStatusRequest) (*ssov1.Empty, error)
+	InquiryForChange(ctx context.Context, in *ssov1.InquiryReq) (*ssov1.InquiryResp, error)
+	AccessForChanges(ctx context.Context, in *ssov1.AccessReq) (*ssov1.Empty, error)
+
+	ChangePassword(ctx context.Context, in *ssov1.ChangePassReq) (*ssov1.Empty, error)
+	ChangeUsername(ctx context.Context, in *ssov1.ChangeUsernameReq) (*ssov1.Empty, error)
+	ChangeEmail(ctx context.Context, in *ssov1.ChangeEmailReq) (*ssov1.Empty, error)
 }

@@ -12,10 +12,14 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *AuthServer) ChangeUsername(ctx context.Context, in *ssov1.ChangeUsernameRequest) (*ssov1.Empty, error) {
+func (s *AuthServer) ChangeUsername(ctx context.Context, in *ssov1.ChangeUsernameReq) (*ssov1.Empty, error) {
 	log := s.Log
 
 	userID, err := s.Authenticate(ctx)
+	if err != nil {
+		log.Error("Error getting user from JWT-token: %s", err)
+		return nil, status.Error(codes.Unauthenticated, "invalid token")
+	}
 
 	user, err := s.Queries.GetUserByID(ctx, userID)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -31,7 +35,15 @@ func (s *AuthServer) ChangeUsername(ctx context.Context, in *ssov1.ChangeUsernam
 		return nil, status.Error(codes.Unauthenticated, "invalid password")
 	}
 
-	//TODO add auth email
+	eve, err := s.Events.GetEvent(user.Username)
+	if err != nil {
+		log.Errorf("error checking in queue: %v", err)
+		return nil, status.Error(codes.Internal, "failed to check in queue")
+	}
+	if eve != CHANGE_USERNAME {
+		log.Errorf("user %s is not in the change username queue", user.Username)
+		return nil, status.Error(codes.PermissionDenied, "user is not in the change username queue")
+	}
 
 	stmt := data.UpdateUsernameByIDParams{
 		Username: user.Username,

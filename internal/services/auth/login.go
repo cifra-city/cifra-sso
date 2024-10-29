@@ -16,7 +16,7 @@ import (
 )
 
 // Login - method for user login and JWT token generation.
-func (s *AuthServer) Login(ctx context.Context, in *ssov1.LoginRequest) (*ssov1.LoginResponse, error) {
+func (s *AuthServer) Login(ctx context.Context, in *ssov1.LoginReq) (*ssov1.LoginResp, error) {
 	log := s.Log
 
 	// Fetch the user from the database.

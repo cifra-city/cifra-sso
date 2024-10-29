@@ -1,4 +1,4 @@
-package authsrv
+package auth
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 )
 
 // Register - method for registering a new user.
-func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterRequest) (*ssov1.Empty, error) {
+func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterReq) (*ssov1.Empty, error) {
 	log := s.Log
 
 	log.Debugf("email: %s user: %s password: %s ", in.Email, in.Username, in.Password)
