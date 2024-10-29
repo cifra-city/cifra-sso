@@ -6,6 +6,7 @@ import (
 	"github.com/cifra-city/cifra-sso/internal/config"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
 	"github.com/cifra-city/cifra-sso/internal/email"
+	"github.com/cifra-city/cifra-sso/internal/events"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -17,6 +18,7 @@ type AuthServer struct {
 	Config  *config.Config // Interface for handling authentication methods.
 	Log     *logrus.Logger
 	Email   email.Mailman
+	Events  events.Events
 
 	ssov1.UnimplementedAuthServer
 	AuthService

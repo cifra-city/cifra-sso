@@ -4,79 +4,67 @@ package auth;
 
 option go_package = "github.com/cifra-city/cifra-sso;ssov1";
 
-// Auth service for authentication and authorization users
-service Auth {
-  rpc Register(RegisterRequest) returns (Empty);
-  rpc Logout(Empty) returns (Empty);
-
-  rpc TryLogin(TryLoginRequest) returns (TryLoginResponse);
-  rpc ConfirmLogin(LoginRequest) returns (LoginResponse);
-
-  rpc ChangePassword(ChangePasswordRequest) returns (Empty);
-  rpc ConfirmChangePassword(ConfirmChangePasswordRequest) returns (Empty);
-
-  rpc ChangeUsername(ChangeUsernameRequest) returns (Empty);
-  rpc ConfirmChangeUsername(ConfirmChangeUsernameRequest) returns (Empty);
-
-  rpc ConfirmChangeEmail(ConfirmChangeEmailRequest) returns (Empty);
-  rpc ChangeEmail(ChangeEmailRequest) returns (Empty);
-
-  rpc ChangeEmailStatus(ChangeEmailStatusRequest) returns (Empty);
+enum events {
+  LOGIN = 0;
+  CHANGE_PASSWORD = 1;
+  CHANGE_USERNAME = 2;
+  CHANGE_EMAIL = 3;
+  CONFIRM_EMAIL = 4;
 }
 
-message RegisterRequest {
+// Auth service for authentication and authorization users
+service Auth {
+  rpc Register(RegisterReq) returns (Empty);
+  rpc Logout(Empty) returns (Empty);
+
+  rpc InquiryForChangeRequest(InquiryReq) returns (InquiryResp);
+  rpc AccessForChanges(AccessReq) returns (AccessResp);
+
+  rpc Login(LoginReq) returns (LoginResp);
+  rpc ChangePass(ChangePassReq) returns (Empty);
+  rpc ChangeUsername(ChangeUsernameReq) returns (Empty);
+  rpc ChangeEmail(ChangeEmailReq) returns (Empty);
+}
+
+message RegisterReq {
    string email = 1;
    string username = 2;
    string password = 3;
 }
-
-message TryLoginRequest {
-  optional string email = 1;
-  optional string username = 2;
-}
-message TryLoginResponse {
-  bool email_status = 1;
-}
-
-message LoginRequest{
+message LoginReq{
   optional string email = 1;
   optional string username = 2;
   string password = 3;
 }
-message LoginResponse {
-  string token = 1;
-}
-
-message ChangePasswordRequest {
-  string old_password = 1;
+message ChangePassReq {
   string new_password = 2;
 }
-message ConfirmChangePasswordRequest {
-  string code = 1;
-  string new_password = 2;
-}
-
-message ChangeEmailRequest {
+message ChangeEmailReq {
   string password = 1;
   string new_email = 3;
 }
-message ConfirmChangeEmailRequest {
-  string code = 1;
-  string old_email = 2;
-}
-
-message ChangeUsernameRequest {
+message ChangeUsernameReq {
   string password = 1;
   string old_username = 2;
   string new_username = 3;
 }
-message ConfirmChangeUsernameRequest {
-  string code = 1;
-  string new_username = 3;
+
+message AccessReq{
+  events eve = 1;
+  string code = 2;
+}
+message InquiryReq{
+    events eve = 1;
 }
 
-message ChangeEmailStatusRequest {
-  bool email_status = 1;
+message LoginResp {
+  string token = 1;
+}
+message AccessResp {
+  string link = 1;
+}
+message InquiryResp{
+  events eve = 1;
 }
 
 message Empty {}

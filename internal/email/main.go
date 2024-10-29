@@ -22,10 +22,3 @@ func NewMailman(cfg *config.Config, log *logrus.Logger) *Mailman {
 		emailListCode: make(map[string]string),
 	}
 }
-
-type mailman interface {
-	AddToEmailList(username string, code string)
-	CheckInEmailList(username string, code string)
-	SendConfirmationEmail(to string, code string)
-	GenerateConfirmationCode()
-}

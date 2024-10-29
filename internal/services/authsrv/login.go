@@ -23,31 +23,34 @@ func (s *AuthServer) Login(ctx context.Context, in *ssov1.LoginRequest) (*ssov1.
 	var user data.UsersSecret
 	var err error
 
-	user, err = s.Queries.GetUserByEmail(ctx, in.Email)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, status.Error(codes.NotFound, "user not found")
+	if in.Username != nil {
+		user, err = s.Queries.GetUserByUsername(ctx, *in.Username)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, status.Error(codes.NotFound, "user not found")
+			}
+			log.Errorf("Error %s", err)
+			return nil, status.Error(codes.Internal, "error getting user")
 		}
-		log.Errorf("Error %s", err)
-		return nil, status.Error(codes.Internal, "error getting user")
+		log.Infof("Start try to response by %s", user.Username)
+	} else if in.Email != nil {
+		user, err = s.Queries.GetUserByEmail(ctx, *in.Email)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, status.Error(codes.NotFound, "user not found")
+			}
+			log.Errorf("Error %s", err)
+			return nil, status.Error(codes.Internal, "error getting user")
+		}
+		log.Infof("Start try to response by %s", user.Email)
+	} else {
+		return nil, status.Error(codes.InvalidArgument, "username or email not provided")
 	}
 
-	if user, err = s.Queries.GetUserByUsername(ctx, in.Username); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+	if user.EmailStatus {
+		if !s.Email.CheckInEmailList(user.Username, in.Code) {
 			return nil, status.Error(codes.NotFound, "user not found")
 		}
-		log.Errorf("error is %s", err)
-		return nil, status.Error(codes.Internal, "error getting user")
-	}
-
-	//TODO add logic for proof email by sending list with code
-
-	if errors.Is(err, sql.ErrNoRows) {
-		log.Debugf("user not found %s", in.Username)
-		return nil, status.Error(codes.Unauthenticated, "user not found")
-	} else if err != nil {
-		log.Debugf("error getting user %s", err)
-		return nil, status.Error(codes.Internal, "failed to retrieve user")
 	}
 
 	// Compare the provided password with the stored hashed password.
