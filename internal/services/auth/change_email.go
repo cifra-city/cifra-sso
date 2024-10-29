@@ -1,4 +1,4 @@
-package authsrv
+package auth
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/cifra-city/cifra-sso/internal/db/data"
+	"github.com/cifra-city/cifra-sso/internal/tools/jwt"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,7 +15,7 @@ import (
 func (s *AuthServer) ChangeEmail(ctx context.Context, in *ssov1.ChangeEmailReq) (*ssov1.Empty, error) {
 	log := s.Log
 
-	userID, err := s.Authenticate(ctx)
+	userID, err := jwt.VerificationJWT(ctx, log, s.Config.JWT.SecretKey)
 	if err != nil {
 		log.Error("Error getting user from JWT-token: %s", err)
 		return nil, status.Error(codes.Unauthenticated, "invalid token")

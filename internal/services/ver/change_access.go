@@ -1,16 +1,17 @@
-package auth
+package ver
 
 import (
 	"context"
 
+	"github.com/cifra-city/cifra-sso/internal/tools/jwt"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 )
 
 // AccessForChanges is a method that adds a user to the event list
-func (s *AuthServer) AccessForChanges(ctx context.Context, in *ssov1.AccessReq) (*ssov1.AccessResp, error) {
+func (s *VerServer) AccessForChanges(ctx context.Context, in *ssov1.AccessReq) (*ssov1.AccessResp, error) {
 	log := s.Log
 
-	user, err := s.Authenticate(ctx)
+	user, err := jwt.VerificationJWT(ctx, log, s.Config.JWT.SecretKey)
 	if err != nil {
 		log.Error("Error getting user from JWT-token: %s", err)
 		return nil, err

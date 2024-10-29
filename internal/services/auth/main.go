@@ -1,14 +1,13 @@
-package authsrv
+package auth
 
 import (
 	"context"
 
 	"github.com/cifra-city/cifra-sso/internal/config"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
-	"github.com/cifra-city/cifra-sso/internal/email"
-	"github.com/cifra-city/cifra-sso/internal/events"
+	"github.com/cifra-city/cifra-sso/internal/tools/email"
+	"github.com/cifra-city/cifra-sso/internal/tools/events"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
-	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,7 +16,6 @@ const (
 	CHANGE_EMAIL    = "CHANGE_EMAIL"
 	CHANGE_PASS     = "CHANGE_PASS"
 	CHANGE_USERNAME = "CHANGE_USERNAME"
-	CONFIRM_EMAIL   = "CONFIRM_EMAIL"
 )
 
 // AuthServer - structure for implementing the gRPC service.
@@ -39,19 +37,14 @@ func NewAuthServer(queries *data.Queries, cfg *config.Config, log *logrus.Logger
 		Config:  cfg,
 		Log:     log,
 		Email:   *email.NewMailman(cfg, log),
+		Events:  *events.NewEvents(cfg, log),
 	}
 }
 
 // AuthService defines the methods for user authentication and authorization.
 type AuthService interface {
-	Authenticate(ctx context.Context) (uuid.UUID, error)
-
-	Register(ctx context.Context, in *ssov1.RegisterReq) (*ssov1.Empty, error)
 	Login(ctx context.Context, in *ssov1.LoginReq) (*ssov1.LoginResp, error)
 	Logout(ctx context.Context, in *ssov1.Empty) (*ssov1.Empty, error)
-
-	InquiryForChange(ctx context.Context, in *ssov1.InquiryReq) (*ssov1.InquiryResp, error)
-	AccessForChanges(ctx context.Context, in *ssov1.AccessReq) (*ssov1.Empty, error)
 
 	ChangePassword(ctx context.Context, in *ssov1.ChangePassReq) (*ssov1.Empty, error)
 	ChangeUsername(ctx context.Context, in *ssov1.ChangeUsernameReq) (*ssov1.Empty, error)

@@ -1,10 +1,11 @@
-package authsrv
+package auth
 
 import (
 	"context"
 	"database/sql"
 	"errors"
 
+	"github.com/cifra-city/cifra-sso/internal/tools/jwt"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -15,7 +16,7 @@ func (s *AuthServer) Logout(ctx context.Context, in *ssov1.Empty) (*ssov1.Empty,
 
 	log := s.Log
 
-	userID, err := s.Authenticate(ctx)
+	userID, err := jwt.VerificationJWT(ctx, log, s.Config.JWT.SecretKey)
 	if err != nil {
 		log.Error("Error getting user from JWT-token: %s", err)
 		return nil, status.Error(codes.Unauthenticated, "invalid token")

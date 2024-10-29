@@ -17,8 +17,8 @@ service Auth {
   rpc Register(RegisterReq) returns (Empty);
   rpc Logout(Empty) returns (Empty);
 
-  rpc InquiryForChangeRequest(InquiryReq) returns (InquiryResp);
-  rpc AccessForChanges(AccessReq) returns (AccessResp);
+  rpc InquiryForChangeRequest(InquiryReq) returns (InquiryResp); // Запрос для получения доступа на изменение данных
+  rpc AccessForChanges(AccessReq) returns (AccessResp);          // Подтверждение доступа на изменение данных
 
   rpc Login(LoginReq) returns (LoginResp);
   rpc ChangePass(ChangePassReq) returns (Empty);
@@ -37,7 +37,7 @@ message LoginReq{
   string password = 3;
 }
 message ChangePassReq {
-  string new_password = 2;
+  string new_password = 1;
 }
 message ChangeEmailReq {
   string password = 1;
@@ -61,10 +61,10 @@ message LoginResp {
   string token = 1;
 }
 message AccessResp {
-  string link = 1;
+  events eve = 1;
 }
 message InquiryResp{
-  events eve = 1;
+  string link = 1;
 }
 
 message Empty {}

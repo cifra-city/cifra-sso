@@ -1,4 +1,4 @@
-package auth
+package reg
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"errors"
 
 	"github.com/cifra-city/cifra-sso/internal/db/data"
-	"github.com/cifra-city/cifra-sso/internal/domain"
+	"github.com/cifra-city/cifra-sso/internal/tools/security"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -15,7 +15,7 @@ import (
 )
 
 // Register - method for registering a new user.
-func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterReq) (*ssov1.Empty, error) {
+func (s *RegServer) Register(ctx context.Context, in *ssov1.RegisterReq) (*ssov1.Empty, error) {
 	log := s.Log
 
 	log.Debugf("email: %s user: %s password: %s ", in.Email, in.Username, in.Password)
@@ -25,7 +25,7 @@ func (s *AuthServer) Register(ctx context.Context, in *ssov1.RegisterReq) (*ssov
 
 	// Check password length and requirements.
 	log.Debugf("password: %s ", in.Password)
-	if len(in.Password) < 8 || !domain.HasRequiredChars(in.Password) {
+	if len(in.Password) < 8 || !security.HasRequiredChars(in.Password) {
 		return nil, status.Error(codes.InvalidArgument, "password must be at least 8 characters and contain uppercase, lowercase, number, and special character")
 	}
 
