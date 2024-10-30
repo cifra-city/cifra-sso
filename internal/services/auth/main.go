@@ -5,8 +5,8 @@ import (
 
 	"github.com/cifra-city/cifra-sso/internal/config"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
-	"github.com/cifra-city/cifra-sso/internal/tools/email"
-	"github.com/cifra-city/cifra-sso/internal/tools/events"
+	"github.com/cifra-city/cifra-sso/internal/modules/email"
+	"github.com/cifra-city/cifra-sso/internal/modules/events"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 	"github.com/sirupsen/logrus"
 )
@@ -23,21 +23,21 @@ type AuthServer struct {
 	Queries *data.Queries
 	Config  *config.Config // Interface for handling authentication methods.
 	Log     *logrus.Logger
-	Email   email.Mailman
-	Events  events.Events
+	Email   *email.Mailman
+	Events  *events.Events
 
 	ssov1.UnimplementedAuthServer
 	AuthService
 }
 
 // NewAuthServer create new AuthServer.
-func NewAuthServer(queries *data.Queries, cfg *config.Config, log *logrus.Logger) *AuthServer {
+func NewAuthServer(queries *data.Queries, cfg *config.Config, log *logrus.Logger, mailman *email.Mailman, eventsList *events.Events) *AuthServer {
 	return &AuthServer{
 		Queries: queries,
 		Config:  cfg,
 		Log:     log,
-		Email:   *email.NewMailman(cfg, log),
-		Events:  *events.NewEvents(cfg, log),
+		Email:   mailman,
+		Events:  eventsList,
 	}
 }
 

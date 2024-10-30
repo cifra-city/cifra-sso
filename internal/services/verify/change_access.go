@@ -1,9 +1,9 @@
-package ver
+package verify
 
 import (
 	"context"
 
-	"github.com/cifra-city/cifra-sso/internal/tools/jwt"
+	"github.com/cifra-city/cifra-sso/internal/modules/jwt"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 )
 

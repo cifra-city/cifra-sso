@@ -6,7 +6,7 @@ import (
 	"errors"
 
 	"github.com/cifra-city/cifra-sso/internal/db/data"
-	"github.com/cifra-city/cifra-sso/internal/tools/security"
+	"github.com/cifra-city/cifra-sso/internal/modules/security"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"

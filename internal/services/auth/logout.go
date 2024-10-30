@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/cifra-city/cifra-sso/internal/tools/jwt"
+	"github.com/cifra-city/cifra-sso/internal/modules/jwt"
 	ssov1 "github.com/cifra-city/cifra-sso/resources/grpc/gen"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

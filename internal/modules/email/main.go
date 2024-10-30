@@ -14,13 +14,6 @@ type Mailman struct {
 	emailListCode map[string]string
 }
 
-type mailman interface {
-	AddToEmailList(username string, code string)
-	CheckInEmailList(username string, code string) bool
-	SendConfirmationEmail(to string, code string) error
-	GenerateConfirmationCode() (string, error)
-}
-
 func NewMailman(cfg *config.Config, log *logrus.Logger) *Mailman {
 	return &Mailman{
 		Cfg:           cfg,

@@ -14,7 +14,6 @@ enum events {
 
 // Auth service for authentication and authorization users
 service Auth {
-  rpc Register(RegisterReq) returns (Empty);
   rpc Logout(Empty) returns (Empty);
 
   rpc InquiryForChangeRequest(InquiryReq) returns (InquiryResp); // Запрос для получения доступа на изменение данных
@@ -26,6 +25,13 @@ service Auth {
   rpc ChangeEmail(ChangeEmailReq) returns (Empty);
 }
 
+service Reg {
+  rpc Register(RegisterReq) returns (Empty);
+}
+
+service Verify {
+  rpc VerifyEmail(Empty) returns (Empty);
+}
 message RegisterReq {
    string email = 1;
    string username = 2;
