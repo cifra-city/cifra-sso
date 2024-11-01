@@ -1,14 +1,14 @@
-PROTO_DIR=resources/grpc/proto
-GEN_DIR=resources/grpc/gen
-DOC_DIR=docs
+PROTO_DIR=api/proto
+PROTO_GEN_DIR=internal/api
+DOC_DIR=api/rest
 
 DB_URL=postgresql://postgres:postgres@localhost:5555/postgres?sslmode=disable
 
 generate-proto: create-gen-dir
-	protoc --go_out=$(GEN_DIR) --go-grpc_out=$(GEN_DIR) --go_opt=M$(PROTO_DIR)/sso.proto=./ --go-grpc_opt=M$(PROTO_DIR)/sso.proto=./ --go_opt=paths=import --go-grpc_opt=paths=import $(PROTO_DIR)/sso.proto
+	protoc --go_out=$(PROTO_GEN_DIR) --go-grpc_out=$(PROTO_GEN_DIR) --go_opt=M$(PROTO_DIR)/sso.proto=./ --go-grpc_opt=M$(PROTO_DIR)/sso.proto=./ --go_opt=paths=import --go-grpc_opt=paths=import $(PROTO_DIR)/sso.proto
 
 create-gen-dir:
-	mkdir -p $(GEN_DIR)
+	mkdir -p $(PROTO_GEN_DIR)
 
 generate-docs: create-docs-dir
 	protoc -I $(PROTO_DIR) --doc_out=$(DOC_DIR) --doc_opt=html,index.html $(PROTO_DIR)/sso.proto
@@ -28,3 +28,8 @@ migrate-down:
 generate-sqlc:
 	sqlc generate
 
+build-server:
+	go build -o main cmd/sso/main.go
+
+run-server: build-server
+	go run cmd/sso/main.go
