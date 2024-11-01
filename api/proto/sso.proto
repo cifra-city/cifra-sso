@@ -27,31 +27,34 @@ service Reg {
 }
 
 service Verify {
-  rpc VerifyEmail(Empty) returns (Empty);
+  rpc VerifyEmail(VerifyEmailReq) returns (Empty);
 
   rpc SendConfirmCode(Empty) returns (InquiryResp); // Запрос для получения доступа на изменение данных
-  rpc AccessForChanges(AccessReq) returns (AccessResp);          // Подтверждение доступа на изменение данных
+  rpc AccessForChanges(AccessReq) returns (AccessResp); // Подтверждение доступа на изменение данных
 
 }
-
 
 message RegisterReq {
    string email = 1;
    string username = 2;
    string password = 3;
 }
+
 message LoginReq{
   optional string email = 1;
   optional string username = 2;
   string password = 3;
 }
+
 message ChangePassReq {
   string new_password = 1;
 }
+
 message ChangeEmailReq {
   string password = 1;
   string new_email = 3;
 }
+
 message ChangeUsernameReq {
   string password = 1;
   string new_username = 2;
@@ -61,6 +64,7 @@ message AccessReq{
   events eve = 1;
   string code = 2;
 }
+
 message InquiryReq{
     events eve = 1;
 }
@@ -68,11 +72,17 @@ message InquiryReq{
 message LoginResp {
   string token = 1;
 }
+
 message AccessResp {
   events eve = 1;
 }
+
 message InquiryResp{
   string link = 1;
+}
+
+message VerifyEmailReq {
+  string code = 1;
 }
 
 message Empty {}

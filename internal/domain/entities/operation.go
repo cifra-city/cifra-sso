@@ -3,8 +3,9 @@ package entities
 type OperationType string
 
 const (
-	ChangeEmail    OperationType = "CHANGE_EMAIL"
-	ChangePassword OperationType = "CHANGE_PASS"
-	ChangeUsername OperationType = "CHANGE_USERNAME"
-	Login          OperationType = "LOGIN"
+	ChangeEmail    = "CHANGE_EMAIL"
+	ChangePassword = "CHANGE_PASS"
+	ChangeUsername = "CHANGE_USERNAME"
+	ConfirmEmail   = "CONFIRM_EMAIL"
+	Login          = "LOGIN"
 )

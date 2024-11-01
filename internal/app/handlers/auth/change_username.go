@@ -7,6 +7,7 @@ import (
 
 	ssov1 "github.com/cifra-city/cifra-sso/internal/api"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
+	"github.com/cifra-city/cifra-sso/internal/domain/entities"
 	"github.com/cifra-city/cifra-sso/internal/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -30,6 +31,11 @@ func (s *Server) ChangeUsername(ctx context.Context, in *ssov1.ChangeUsernameReq
 		return nil, status.Error(codes.Internal, "failed to retrieve user")
 	}
 
+	if !user.EmailStatus {
+		log.Errorf("user %s has not confirmed their email", user.Username)
+		return nil, status.Error(codes.PermissionDenied, "user has not confirmed your email")
+	}
+
 	err = bcrypt.CompareHashAndPassword([]byte(user.PassHash), []byte(in.Password))
 	if err != nil {
 		log.Debugf("incorect password for user: %s", user.Username)
@@ -41,7 +47,7 @@ func (s *Server) ChangeUsername(ctx context.Context, in *ssov1.ChangeUsernameReq
 		log.Errorf("error checking in queue: %v", err)
 		return nil, status.Error(codes.Internal, "failed to check in queue")
 	}
-	if eve != ChangeUsername {
+	if eve != entities.ChangeUsername {
 		log.Errorf("user %s is not in the change username queue", user.Username)
 		return nil, status.Error(codes.PermissionDenied, "user is not in the change username queue")
 	}
