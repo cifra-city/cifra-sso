@@ -388,7 +388,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VerifyClient interface {
-	VerifyEmail(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
+	VerifyEmail(ctx context.Context, in *VerifyEmailReq, opts ...grpc.CallOption) (*Empty, error)
 	SendConfirmCode(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*InquiryResp, error)
 	AccessForChanges(ctx context.Context, in *AccessReq, opts ...grpc.CallOption) (*AccessResp, error)
 }
@@ -401,7 +401,7 @@ func NewVerifyClient(cc grpc.ClientConnInterface) VerifyClient {
 	return &verifyClient{cc}
 }
 
-func (c *verifyClient) VerifyEmail(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
+func (c *verifyClient) VerifyEmail(ctx context.Context, in *VerifyEmailReq, opts ...grpc.CallOption) (*Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Empty)
 	err := c.cc.Invoke(ctx, Verify_VerifyEmail_FullMethodName, in, out, cOpts...)
@@ -435,7 +435,7 @@ func (c *verifyClient) AccessForChanges(ctx context.Context, in *AccessReq, opts
 // All implementations must embed UnimplementedVerifyServer
 // for forward compatibility.
 type VerifyServer interface {
-	VerifyEmail(context.Context, *Empty) (*Empty, error)
+	VerifyEmail(context.Context, *VerifyEmailReq) (*Empty, error)
 	SendConfirmCode(context.Context, *Empty) (*InquiryResp, error)
 	AccessForChanges(context.Context, *AccessReq) (*AccessResp, error)
 	mustEmbedUnimplementedVerifyServer()
@@ -448,7 +448,7 @@ type VerifyServer interface {
 // pointer dereference when methods are called.
 type UnimplementedVerifyServer struct{}
 
-func (UnimplementedVerifyServer) VerifyEmail(context.Context, *Empty) (*Empty, error) {
+func (UnimplementedVerifyServer) VerifyEmail(context.Context, *VerifyEmailReq) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
 }
 func (UnimplementedVerifyServer) SendConfirmCode(context.Context, *Empty) (*InquiryResp, error) {
@@ -479,7 +479,7 @@ func RegisterVerifyServer(s grpc.ServiceRegistrar, srv VerifyServer) {
 }
 
 func _Verify_VerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
+	in := new(VerifyEmailReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -491,7 +491,7 @@ func _Verify_VerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: Verify_VerifyEmail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VerifyServer).VerifyEmail(ctx, req.(*Empty))
+		return srv.(VerifyServer).VerifyEmail(ctx, req.(*VerifyEmailReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }

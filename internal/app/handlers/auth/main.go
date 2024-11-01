@@ -10,12 +10,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	ChangeEmail    = "CHANGE_EMAIL"
-	ChangePassword = "CHANGE_PASS"
-	ChangeUsername = "ChangeUsername"
-)
-
 // Server - structure for implementing the gRPC service.
 type Server struct {
 	Handlers         services.Authentication
