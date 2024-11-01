@@ -198,18 +198,21 @@ func (q *Queries) ListUsersByUsername(ctx context.Context, arg ListUsersByUserna
 
 const updateEmailByID = `-- name: UpdateEmailByID :one
 UPDATE users_secret
-SET email = $2
+SET
+    email = $2,
+    email_status = $3
 WHERE id = $1
     RETURNING id, username, email, email_status, pass_hash
 `
 
 type UpdateEmailByIDParams struct {
-	ID    uuid.UUID
-	Email string
+	ID          uuid.UUID
+	Email       string
+	EmailStatus bool
 }
 
 func (q *Queries) UpdateEmailByID(ctx context.Context, arg UpdateEmailByIDParams) (UsersSecret, error) {
-	row := q.db.QueryRowContext(ctx, updateEmailByID, arg.ID, arg.Email)
+	row := q.db.QueryRowContext(ctx, updateEmailByID, arg.ID, arg.Email, arg.EmailStatus)
 	var i UsersSecret
 	err := row.Scan(
 		&i.ID,
