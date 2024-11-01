@@ -36,7 +36,7 @@ type Config struct {
 	Server   ServerConfig   `mapstructure:"server"`
 	JWT      JWTConfig      `mapstructure:"jwt"`
 	Logging  LoggingConfig  `mapstructure:"logging"`
-	Email    EmailConfig    `mapstructure:"email_onfig"`
+	Email    EmailConfig    `mapstructure:"email"`
 }
 
 // LoadConfig - функция для загрузки конфигурации из файла.

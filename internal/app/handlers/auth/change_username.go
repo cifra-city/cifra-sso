@@ -57,6 +57,6 @@ func (s *Server) ChangeUsername(ctx context.Context, in *ssov1.ChangeUsernameReq
 		return nil, status.Error(codes.Internal, "failed to update user")
 	}
 
-	log.Infof("user %s has change username to %s", in.OldUsername, in.NewUsername)
+	log.Infof("user %s has change username to %s", user.Username, in.NewUsername)
 	return &ssov1.Empty{}, nil
 }

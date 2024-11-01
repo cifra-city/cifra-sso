@@ -7,7 +7,7 @@ func (a *ActionPermission) AddToQueue(username string, eve string) {
 	a.Queue[username] = eve
 	a.mu.Unlock()
 
-	time.AfterFunc(360*time.Second, func() {
+	time.AfterFunc(180*time.Second, func() {
 		a.mu.Lock()
 		defer a.mu.Unlock()
 		if _, exists := a.Queue[username]; exists {

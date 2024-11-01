@@ -29,7 +29,7 @@ service Reg {
 service Verify {
   rpc VerifyEmail(Empty) returns (Empty);
 
-  rpc InquiryForChange(InquiryReq) returns (InquiryResp); // Запрос для получения доступа на изменение данных
+  rpc SendConfirmCode(Empty) returns (InquiryResp); // Запрос для получения доступа на изменение данных
   rpc AccessForChanges(AccessReq) returns (AccessResp);          // Подтверждение доступа на изменение данных
 
 }
@@ -54,8 +54,7 @@ message ChangeEmailReq {
 }
 message ChangeUsernameReq {
   string password = 1;
-  string old_username = 2;
-  string new_username = 3;
+  string new_username = 2;
 }
 
 message AccessReq{

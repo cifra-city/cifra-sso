@@ -3,10 +3,7 @@ package email
 import (
 	"crypto/rand"
 	"fmt"
-	"strconv"
 	"time"
-
-	"gopkg.in/gomail.v2"
 )
 
 func (m *Mailman) AddToEmailList(username string, code string) {
@@ -14,7 +11,7 @@ func (m *Mailman) AddToEmailList(username string, code string) {
 	m.ListCode[username] = code
 	m.mu.Unlock()
 
-	time.AfterFunc(60*time.Second, func() {
+	time.AfterFunc(180*time.Second, func() {
 		m.mu.Lock()
 		defer m.mu.Unlock()
 		if _, exists := m.ListCode[username]; exists {
@@ -29,43 +26,23 @@ func (m *Mailman) CheckInEmailList(username string, code string) bool {
 
 	if storedCode, exists := m.ListCode[username]; exists && storedCode == code {
 		delete(m.ListCode, username)
+		m.Log.Infof("Code for user %s is correct and has been used", username)
 		return true
+	} else if exists {
+		m.Log.Infof("Incorrect code for user %s", username)
+	} else {
+		m.Log.Infof("No code found for user %s", username)
 	}
 
 	return false
 }
 
-func (m *Mailman) SendConfirmationEmail(to string, code string) error {
-	mes := gomail.NewMessage()
-
-	mes.SetHeader("From", m.Cfg.Email.Address)
-	mes.SetHeader("To", to)
-	mes.SetHeader("Subject", "Email Confirmation")
-
-	mes.SetBody("text/plain", fmt.Sprintf("Your confirmation code: %s", code))
-
-	smtpPort, err := strconv.Atoi(m.Cfg.Email.SmtpPort)
-	if err != nil {
-		m.Log.Fatalf("Invalid SMTP port: %v", err)
-	}
-
-	d := gomail.NewDialer(m.Cfg.Email.SmtpHost, smtpPort, m.Cfg.Email.Address, m.Cfg.Email.Password)
-
-	if err := d.DialAndSend(mes); err != nil {
-		return err
-	}
-
-	m.AddToEmailList(to, code)
-
-	return nil
-}
-
 func GenerateConfirmationCode() (string, error) {
-	b := make([]byte, 6)
+	b := make([]byte, 3)
 	_, err := rand.Read(b)
 	if err != nil {
 		return "", err
 	}
-	code := fmt.Sprintf("%06d", b[0:3])
+	code := fmt.Sprintf("%06d", int(b[0])<<16|int(b[1])<<8|int(b[2]))
 	return code, nil
 }

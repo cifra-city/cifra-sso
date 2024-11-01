@@ -380,7 +380,7 @@ var Reg_ServiceDesc = grpc.ServiceDesc{
 
 const (
 	Verify_VerifyEmail_FullMethodName      = "/auth.Verify/VerifyEmail"
-	Verify_InquiryForChange_FullMethodName = "/auth.Verify/InquiryForChange"
+	Verify_SendConfirmCode_FullMethodName  = "/auth.Verify/SendConfirmCode"
 	Verify_AccessForChanges_FullMethodName = "/auth.Verify/AccessForChanges"
 )
 
@@ -389,7 +389,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VerifyClient interface {
 	VerifyEmail(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
-	InquiryForChange(ctx context.Context, in *InquiryReq, opts ...grpc.CallOption) (*InquiryResp, error)
+	SendConfirmCode(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*InquiryResp, error)
 	AccessForChanges(ctx context.Context, in *AccessReq, opts ...grpc.CallOption) (*AccessResp, error)
 }
 
@@ -411,10 +411,10 @@ func (c *verifyClient) VerifyEmail(ctx context.Context, in *Empty, opts ...grpc.
 	return out, nil
 }
 
-func (c *verifyClient) InquiryForChange(ctx context.Context, in *InquiryReq, opts ...grpc.CallOption) (*InquiryResp, error) {
+func (c *verifyClient) SendConfirmCode(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*InquiryResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(InquiryResp)
-	err := c.cc.Invoke(ctx, Verify_InquiryForChange_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Verify_SendConfirmCode_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -436,7 +436,7 @@ func (c *verifyClient) AccessForChanges(ctx context.Context, in *AccessReq, opts
 // for forward compatibility.
 type VerifyServer interface {
 	VerifyEmail(context.Context, *Empty) (*Empty, error)
-	InquiryForChange(context.Context, *InquiryReq) (*InquiryResp, error)
+	SendConfirmCode(context.Context, *Empty) (*InquiryResp, error)
 	AccessForChanges(context.Context, *AccessReq) (*AccessResp, error)
 	mustEmbedUnimplementedVerifyServer()
 }
@@ -451,8 +451,8 @@ type UnimplementedVerifyServer struct{}
 func (UnimplementedVerifyServer) VerifyEmail(context.Context, *Empty) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
 }
-func (UnimplementedVerifyServer) InquiryForChange(context.Context, *InquiryReq) (*InquiryResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InquiryForChange not implemented")
+func (UnimplementedVerifyServer) SendConfirmCode(context.Context, *Empty) (*InquiryResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendConfirmCode not implemented")
 }
 func (UnimplementedVerifyServer) AccessForChanges(context.Context, *AccessReq) (*AccessResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AccessForChanges not implemented")
@@ -496,20 +496,20 @@ func _Verify_VerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Verify_InquiryForChange_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InquiryReq)
+func _Verify_SendConfirmCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VerifyServer).InquiryForChange(ctx, in)
+		return srv.(VerifyServer).SendConfirmCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Verify_InquiryForChange_FullMethodName,
+		FullMethod: Verify_SendConfirmCode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VerifyServer).InquiryForChange(ctx, req.(*InquiryReq))
+		return srv.(VerifyServer).SendConfirmCode(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -544,8 +544,8 @@ var Verify_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Verify_VerifyEmail_Handler,
 		},
 		{
-			MethodName: "InquiryForChange",
-			Handler:    _Verify_InquiryForChange_Handler,
+			MethodName: "SendConfirmCode",
+			Handler:    _Verify_SendConfirmCode_Handler,
 		},
 		{
 			MethodName: "AccessForChanges",

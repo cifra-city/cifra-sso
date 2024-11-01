@@ -7,6 +7,6 @@ import (
 )
 
 type Verification interface {
-	InquiryForChange(ctx context.Context, in *ssov1.InquiryReq) (*ssov1.InquiryResp, error)
+	SendConfirmCode(ctx context.Context, in *ssov1.Empty) (*ssov1.InquiryResp, error)
 	AccessForChanges(ctx context.Context, in *ssov1.AccessReq) (*ssov1.AccessResp, error)
 }

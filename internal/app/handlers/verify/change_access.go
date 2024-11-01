@@ -25,14 +25,16 @@ func (s *Server) AccessForChanges(ctx context.Context, in *ssov1.AccessReq) (*ss
 		return nil, status.Error(codes.Internal, "failed to retrieve user")
 	}
 
-	if !s.Email.CheckInEmailList(userDB.Username, in.Code) {
-		log.Infof("Users code is incorect: %s", err)
-		return nil, status.Error(codes.Internal, "failed to check in email list")
+	if !s.Email.CheckInEmailList(userDB.Email, in.Code) {
+		log.Infof("User`s %s code is incorect: %s", userDB.Email, in.Code)
+		return nil, status.Error(codes.PermissionDenied, "failed to check in email list")
 	}
 
 	s.ActionPermission.AddToQueue(userDB.Username, in.Eve.String())
 
 	log.Infof("Add user %s to event list %s", userDB.Username, in.Eve.String())
 
-	return &ssov1.AccessResp{}, nil
+	return &ssov1.AccessResp{
+		Eve: in.Eve,
+	}, nil
 }
