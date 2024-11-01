@@ -24,19 +24,11 @@ type LoggingConfig struct {
 	Format string `mapstructure:"format"`
 }
 
-type EmailConfig struct {
-	Password string `mapstructure:"password"`
-	Address  string `mapstructure:"address"`
-	SmtpHost string `mapstructure:"smtp_host"`
-	SmtpPort string `mapstructure:"smtp_port"`
-}
-
 type Config struct {
 	Database DatabaseConfig `mapstructure:"database"`
 	Server   ServerConfig   `mapstructure:"server"`
 	JWT      JWTConfig      `mapstructure:"jwt"`
 	Logging  LoggingConfig  `mapstructure:"logging"`
-	Email    EmailConfig    `mapstructure:"email"`
 }
 
 // LoadConfig - функция для загрузки конфигурации из файла.
@@ -52,7 +44,7 @@ func LoadConfig(path string) (*Config, error) {
 
 	var config Config
 
-	// Декодируем конфигурацию в структуру Cfg.
+	// Декодируем конфигурацию в структуру Config.
 	if err := viper.Unmarshal(&config); err != nil {
 		return nil, err
 	}

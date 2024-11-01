@@ -1,0 +1,56 @@
+syntax = 'proto3';
+
+package auth;
+
+option go_package = "github.com/cifra-city/cifra-sso;ssov1";
+
+// Auth service for authentication and authorization users
+service Auth {
+  rpc Register(RegisterRequest) returns (Empty);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Logout(Empty) returns (Empty);
+
+  rpc ChangePassword(ChangePasswordRequest) returns (Empty);
+  rpc ChangeUsername(ChangeUsernameRequest) returns (Empty);
+  rpc ChangeEmail(ChangeEmailRequest) returns (Empty);
+  rpc ChangeEmailStatus(ChangeEmailStatusRequest) returns (Empty);
+}
+
+message RegisterRequest {
+   string email = 1;
+   string username = 2;
+   string password = 3; // Test$7777 for example
+}
+
+message LoginRequest {
+   string email = 1;
+   string username = 2;
+   string password = 3;
+}
+
+message ChangePasswordRequest {
+  string old_password = 1;
+  string new_password = 2;
+}
+
+message ChangeEmailRequest {
+  string password = 1;
+  string old_email = 2;
+  string new_email = 3;
+}
+
+message ChangeUsernameRequest {
+  string password = 1;
+  string old_username = 2;
+  string new_username = 3;
+}
+
+message ChangeEmailStatusRequest {
+  bool email_status = 1;
+}
+
+message Empty {}
+
+message LoginResponse {
+  string token = 1;
+}

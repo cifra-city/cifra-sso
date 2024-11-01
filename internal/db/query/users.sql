@@ -52,9 +52,7 @@ WHERE id = $1
 
 -- name: UpdateEmailByID :one
 UPDATE users_secret
-SET
-    email = $2,
-    email_status = $3
+SET email = $2
 WHERE id = $1
     RETURNING *;
 
