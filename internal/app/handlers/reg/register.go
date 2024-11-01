@@ -18,13 +18,11 @@ import (
 func (s *Server) Register(ctx context.Context, in *ssov1.RegisterReq) (*ssov1.Empty, error) {
 	log := s.Log
 
-	log.Debugf("email: %s user: %s password: %s ", in.Email, in.Username, in.Password)
+	log.Debugf("email: %s; user: %s; password: %s; ", in.Email, in.Username, in.Password)
 	if in.Email == "" || in.Username == "" || in.Password == "" {
 		return nil, status.Error(codes.InvalidArgument, "email, username, and password are required")
 	}
 
-	// Check password length and requirements.
-	log.Debugf("password: %s ", in.Password)
 	if len(in.Password) < 8 || !security.HasRequiredChars(in.Password) {
 		return nil, status.Error(codes.InvalidArgument, "password must be at least 8 characters and contain uppercase, lowercase, number, and special character")
 	}
@@ -71,6 +69,6 @@ func (s *Server) Register(ctx context.Context, in *ssov1.RegisterReq) (*ssov1.Em
 		return nil, status.Error(codes.Internal, "failed to create user")
 	}
 
-	log.Infof("user created: %v", user)
+	log.Infof("user created: %v", user.Username)
 	return &ssov1.Empty{}, nil
 }

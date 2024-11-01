@@ -49,17 +49,15 @@ func (s *Server) Login(ctx context.Context, in *ssov1.LoginReq) (*ssov1.LoginRes
 	err = bcrypt.CompareHashAndPassword([]byte(user.PassHash), []byte(in.Password))
 	if err != nil {
 		log.Debugf("incorect password for user: %s", user.Username)
-		return nil, status.Error(codes.Unauthenticated, "invalid password")
+		return nil, status.Error(codes.InvalidArgument, "invalid password")
 	}
 
-	// Generate a JWT token.
 	token, err := jwt.GenerateJWT(user.ID, s.Config.JWT.TokenLifetime, s.Config.JWT.SecretKey)
 	if err != nil {
 		log.Error("error creating jwt token %s", err)
 		return nil, status.Error(codes.Internal, "failed to generate token")
 	}
 
-	// Return the token in the response The frontend has to process it
 	log.Infof("successfully logged in user %s", user.Username)
 	return &ssov1.LoginResp{Token: token}, nil
 }

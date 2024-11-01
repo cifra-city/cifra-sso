@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) ChangePassword(ctx context.Context, in *ssov1.ChangePassReq) (*ssov1.Empty, error) {
+func (s *Server) ChangePass(ctx context.Context, in *ssov1.ChangePassReq) (*ssov1.Empty, error) {
 	log := s.Log
 
 	userID, err := jwt.VerificationJWT(ctx, log, s.Config.JWT.SecretKey)

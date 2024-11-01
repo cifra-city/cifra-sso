@@ -33,3 +33,6 @@ build-server:
 
 run-server: build-server
 	go run cmd/sso/main.go
+
+run-server-dev:
+	go build -o main cmd/sso/main.go && go run cmd/sso/main.go

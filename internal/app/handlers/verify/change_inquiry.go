@@ -23,18 +23,18 @@ func (s *Server) InquiryForChange(ctx context.Context, in *ssov1.InquiryReq) (*s
 	userDB, err := s.Queries.GetUserByID(ctx, user)
 	if err != nil {
 		log.Error("Error getting user by ID in DB: %s", err)
-		return nil, err
+		return nil, status.Error(codes.Internal, "failed to retrieve user")
 	}
 	code, err := email.GenerateConfirmationCode()
 	if err != nil {
 		log.Error("Error generating confirmation code: %s", err)
-		return nil, err
+		return nil, status.Error(codes.Internal, "failed to generate confirmation code")
 	}
 
 	err = s.Email.SendConfirmationEmail(userDB.Email, code)
 	if err != nil {
 		log.Error("Error sending confirmation email: %s", err)
-		return nil, err
+		return nil, status.Error(codes.Internal, "failed to send confirmation email")
 	}
 
 	return &ssov1.InquiryResp{Link: "TODO"}, nil
