@@ -47,7 +47,7 @@ func (s *Server) ChangeUsername(ctx context.Context, in *ssov1.ChangeUsernameReq
 	}
 
 	stmt := data.UpdateUsernameByIDParams{
-		Username: user.Username,
+		Username: in.NewUsername,
 		ID:       userID,
 	}
 

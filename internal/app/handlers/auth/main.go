@@ -12,8 +12,8 @@ import (
 
 const (
 	ChangeEmail    = "CHANGE_EMAIL"
-	ChangePassword = "CHANGE_PASS"
-	ChangeUsername = "ChangeUsername"
+	ChangePassword = "CHANGE_PASSWORD"
+	ChangeUsername = "CHANGE_USERNAME"
 )
 
 // Server - structure for implementing the gRPC service.
