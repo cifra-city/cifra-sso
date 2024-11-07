@@ -7,6 +7,7 @@ import (
 
 	ssov1 "github.com/cifra-city/cifra-sso/internal/api"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
+	"github.com/cifra-city/cifra-sso/internal/domain/entities"
 	"github.com/cifra-city/cifra-sso/internal/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -30,19 +31,25 @@ func (s *Server) ChangePass(ctx context.Context, in *ssov1.ChangePassReq) (*ssov
 		return nil, status.Error(codes.Internal, "failed to retrieve user")
 	}
 
+	if !user.EmailStatus {
+		log.Errorf("user %s has not confirmed their email", user.Username)
+		return nil, status.Error(codes.PermissionDenied, "user has not confirmed your email")
+	}
+
 	eve, err := s.ActionPermission.GetEvent(user.Username)
 	if err != nil {
 		log.Errorf("error checking in queue: %v", err)
 		return nil, status.Error(codes.Internal, "failed to check in queue")
 	}
-	if eve != ChangePassword {
+	if eve != entities.ChangePassword {
 		log.Errorf("user %s is not in the change passwoed queue", user.Username)
+		log.Infof("event: %s", eve)
 		return nil, status.Error(codes.PermissionDenied, "user is not in the change email password")
 	}
 
 	newPassword, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
-		log.Errorf("error generating new password for user: %s", user.Username)
+		log.Errorf("error generating new hash password for user: %s", user.Username)
 		return nil, status.Error(codes.Internal, "Server Error")
 	}
 

@@ -1,4 +1,4 @@
-package auth
+package verify
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) ChangeEmail(ctx context.Context, in *ssov1.ChangeEmailReq) (*ssov1.Empty, error) {
+func (s *Server) VerifyEmail(ctx context.Context, in *ssov1.Empty) (*ssov1.Empty, error) {
 	log := s.Log
 
 	userID, err := jwt.VerificationJWT(ctx, log, s.Config.JWT.SecretKey)
@@ -30,9 +30,9 @@ func (s *Server) ChangeEmail(ctx context.Context, in *ssov1.ChangeEmailReq) (*ss
 		return nil, status.Error(codes.Internal, "failed to retrieve user")
 	}
 
-	if !user.EmailStatus {
-		log.Errorf("user %s has not confirmed their email", user.Username)
-		return nil, status.Error(codes.PermissionDenied, "user has not confirmed your email")
+	if user.EmailStatus {
+		log.Errorf("user %s has already confirmed their email", user.Username)
+		return nil, status.Error(codes.PermissionDenied, "user has already confirmed your email")
 	}
 
 	eve, err := s.ActionPermission.GetEvent(user.Username)
@@ -40,23 +40,22 @@ func (s *Server) ChangeEmail(ctx context.Context, in *ssov1.ChangeEmailReq) (*ss
 		log.Errorf("error checking in queue: %v", err)
 		return nil, status.Error(codes.Internal, "failed to check in queue")
 	}
-	if eve != entities.ChangeEmail {
-		log.Errorf("user %s is not in the change email queue", user.Username)
-		return nil, status.Error(codes.PermissionDenied, "user is not in the change email queue")
+	if eve != entities.ConfirmEmail {
+		log.Errorf("user %s is not in the confirm email queue", user.Username)
+		return nil, status.Error(codes.PermissionDenied, "user is not in the change confirm email queue")
 	}
 
-	stmt := data.UpdateEmailByIDParams{
+	stmt := data.UpdateEmailStatusByIDParams{
 		ID:          userID,
-		Email:       in.NewEmail,
-		EmailStatus: false,
+		EmailStatus: true,
 	}
 
-	_, err = s.Queries.UpdateEmailByID(ctx, stmt)
+	_, err = s.Queries.UpdateEmailStatusByID(ctx, stmt)
 	if err != nil {
-		log.Errorf("error updating email user %s: %v", user.Username, err)
-		return nil, status.Error(codes.Internal, "Error updating email for user")
+		log.Errorf("error updating email status for user %s: %v", user.Username, err)
+		return nil, status.Error(codes.Internal, "Error updating email status for user")
 	}
 
-	log.Infof("email updated for user: %s - new email %v", user.Username, in.NewEmail)
+	log.Infof("email status updated for user: %s", user.Username)
 	return &ssov1.Empty{}, nil
 }

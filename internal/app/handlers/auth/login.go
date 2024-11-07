@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	ssov1 "github.com/cifra-city/cifra-sso/internal/api"
+	"github.com/cifra-city/cifra-sso/internal/app/modules/email"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
 	"github.com/cifra-city/cifra-sso/internal/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
@@ -45,11 +46,27 @@ func (s *Server) Login(ctx context.Context, in *ssov1.LoginReq) (*ssov1.LoginRes
 		return nil, status.Error(codes.InvalidArgument, "username or email not provided")
 	}
 
-	// Compare the provided password with the stored hashed password.
 	err = bcrypt.CompareHashAndPassword([]byte(user.PassHash), []byte(in.Password))
 	if err != nil {
 		log.Debugf("incorect password for user: %s", user.Username)
 		return nil, status.Error(codes.InvalidArgument, "invalid password")
+	}
+
+	if user.EmailStatus {
+		code, err := email.GenerateConfirmationCode()
+		if err != nil {
+			log.Errorf("Error generating confirmation code: %s", err)
+			return nil, status.Error(codes.Internal, "failed to generate confirmation code")
+		}
+
+		err = s.Email.SendConfirmationCode(user.Email, code)
+		if err != nil {
+			log.Errorf("Error sending confirmation email: %s", err)
+			return nil, status.Error(codes.Internal, "failed to send confirmation email")
+		}
+
+		log.Debugf("Generated confirmation code: %s, %s", code, user.Email)
+		return &ssov1.LoginResp{}, nil
 	}
 
 	token, err := jwt.GenerateJWT(user.ID, s.Config.JWT.TokenLifetime, s.Config.JWT.SecretKey)
@@ -59,5 +76,5 @@ func (s *Server) Login(ctx context.Context, in *ssov1.LoginReq) (*ssov1.LoginRes
 	}
 
 	log.Infof("successfully logged in user %s", user.Username)
-	return &ssov1.LoginResp{Token: token}, nil
+	return &ssov1.LoginResp{Token: &token}, nil
 }

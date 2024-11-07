@@ -4,11 +4,18 @@ DOC_DIR=api/rest
 
 DB_URL=postgresql://postgres:postgres@localhost:5555/postgres?sslmode=disable
 
-generate-proto: create-gen-dir
-	protoc --go_out=$(PROTO_GEN_DIR) --go-grpc_out=$(PROTO_GEN_DIR) --go_opt=M$(PROTO_DIR)/sso.proto=./ --go-grpc_opt=M$(PROTO_DIR)/sso.proto=./ --go_opt=paths=import --go-grpc_opt=paths=import $(PROTO_DIR)/sso.proto
-
-create-gen-dir:
-	mkdir -p $(PROTO_GEN_DIR)
+generate-proto:
+	mkdir -p $(PROTO_GEN_DIR) && \
+	protoc --go_out=$(PROTO_GEN_DIR) --go-grpc_out=$(PROTO_GEN_DIR) \
+		--go_opt=M$(PROTO_DIR)/auth.proto=./ \
+		--go-grpc_opt=M$(PROTO_DIR)/auth.proto=./ \
+		--go_opt=M$(PROTO_DIR)/reg.proto=./ \
+		--go-grpc_opt=M$(PROTO_DIR)/reg.proto=./ \
+		--go_opt=M$(PROTO_DIR)/verify.proto=./ \
+		--go-grpc_opt=M$(PROTO_DIR)/verify.proto=./ \
+		$(PROTO_DIR)/auth.proto \
+		$(PROTO_DIR)/reg.proto \
+		$(PROTO_DIR)/verify.proto
 
 generate-docs: create-docs-dir
 	protoc -I $(PROTO_DIR) --doc_out=$(DOC_DIR) --doc_opt=html,index.html $(PROTO_DIR)/sso.proto
