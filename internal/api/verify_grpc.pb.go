@@ -21,16 +21,16 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Verify_VerifyEmail_FullMethodName      = "/auth.Verify/VerifyEmail"
 	Verify_SendConfirmCode_FullMethodName  = "/auth.Verify/SendConfirmCode"
-	Verify_AccessForChanges_FullMethodName = "/auth.Verify/AccessForChanges"
+	Verify_CheckConfirmCode_FullMethodName = "/auth.Verify/CheckConfirmCode"
 )
 
 // VerifyClient is the client API for Verify service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VerifyClient interface {
-	VerifyEmail(ctx context.Context, in *VerifyEmailReq, opts ...grpc.CallOption) (*Empty, error)
+	VerifyEmail(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
 	SendConfirmCode(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*InquiryResp, error)
-	AccessForChanges(ctx context.Context, in *AccessReq, opts ...grpc.CallOption) (*AccessResp, error)
+	CheckConfirmCode(ctx context.Context, in *CheckConfirmCodeReq, opts ...grpc.CallOption) (*CheckConfirmCodeResp, error)
 }
 
 type verifyClient struct {
@@ -41,7 +41,7 @@ func NewVerifyClient(cc grpc.ClientConnInterface) VerifyClient {
 	return &verifyClient{cc}
 }
 
-func (c *verifyClient) VerifyEmail(ctx context.Context, in *VerifyEmailReq, opts ...grpc.CallOption) (*Empty, error) {
+func (c *verifyClient) VerifyEmail(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Empty)
 	err := c.cc.Invoke(ctx, Verify_VerifyEmail_FullMethodName, in, out, cOpts...)
@@ -61,10 +61,10 @@ func (c *verifyClient) SendConfirmCode(ctx context.Context, in *Empty, opts ...g
 	return out, nil
 }
 
-func (c *verifyClient) AccessForChanges(ctx context.Context, in *AccessReq, opts ...grpc.CallOption) (*AccessResp, error) {
+func (c *verifyClient) CheckConfirmCode(ctx context.Context, in *CheckConfirmCodeReq, opts ...grpc.CallOption) (*CheckConfirmCodeResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AccessResp)
-	err := c.cc.Invoke(ctx, Verify_AccessForChanges_FullMethodName, in, out, cOpts...)
+	out := new(CheckConfirmCodeResp)
+	err := c.cc.Invoke(ctx, Verify_CheckConfirmCode_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,9 +75,9 @@ func (c *verifyClient) AccessForChanges(ctx context.Context, in *AccessReq, opts
 // All implementations must embed UnimplementedVerifyServer
 // for forward compatibility.
 type VerifyServer interface {
-	VerifyEmail(context.Context, *VerifyEmailReq) (*Empty, error)
+	VerifyEmail(context.Context, *Empty) (*Empty, error)
 	SendConfirmCode(context.Context, *Empty) (*InquiryResp, error)
-	AccessForChanges(context.Context, *AccessReq) (*AccessResp, error)
+	CheckConfirmCode(context.Context, *CheckConfirmCodeReq) (*CheckConfirmCodeResp, error)
 	mustEmbedUnimplementedVerifyServer()
 }
 
@@ -88,14 +88,14 @@ type VerifyServer interface {
 // pointer dereference when methods are called.
 type UnimplementedVerifyServer struct{}
 
-func (UnimplementedVerifyServer) VerifyEmail(context.Context, *VerifyEmailReq) (*Empty, error) {
+func (UnimplementedVerifyServer) VerifyEmail(context.Context, *Empty) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
 }
 func (UnimplementedVerifyServer) SendConfirmCode(context.Context, *Empty) (*InquiryResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendConfirmCode not implemented")
 }
-func (UnimplementedVerifyServer) AccessForChanges(context.Context, *AccessReq) (*AccessResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AccessForChanges not implemented")
+func (UnimplementedVerifyServer) CheckConfirmCode(context.Context, *CheckConfirmCodeReq) (*CheckConfirmCodeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckConfirmCode not implemented")
 }
 func (UnimplementedVerifyServer) mustEmbedUnimplementedVerifyServer() {}
 func (UnimplementedVerifyServer) testEmbeddedByValue()                {}
@@ -119,7 +119,7 @@ func RegisterVerifyServer(s grpc.ServiceRegistrar, srv VerifyServer) {
 }
 
 func _Verify_VerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(VerifyEmailReq)
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -131,7 +131,7 @@ func _Verify_VerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: Verify_VerifyEmail_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VerifyServer).VerifyEmail(ctx, req.(*VerifyEmailReq))
+		return srv.(VerifyServer).VerifyEmail(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -154,20 +154,20 @@ func _Verify_SendConfirmCode_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Verify_AccessForChanges_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AccessReq)
+func _Verify_CheckConfirmCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckConfirmCodeReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VerifyServer).AccessForChanges(ctx, in)
+		return srv.(VerifyServer).CheckConfirmCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Verify_AccessForChanges_FullMethodName,
+		FullMethod: Verify_CheckConfirmCode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VerifyServer).AccessForChanges(ctx, req.(*AccessReq))
+		return srv.(VerifyServer).CheckConfirmCode(ctx, req.(*CheckConfirmCodeReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -188,8 +188,8 @@ var Verify_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Verify_SendConfirmCode_Handler,
 		},
 		{
-			MethodName: "AccessForChanges",
-			Handler:    _Verify_AccessForChanges_Handler,
+			MethodName: "CheckConfirmCode",
+			Handler:    _Verify_CheckConfirmCode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -8,5 +8,6 @@ import (
 
 type Verification interface {
 	SendConfirmCode(ctx context.Context, in *ssov1.Empty) (*ssov1.InquiryResp, error)
-	AccessForChanges(ctx context.Context, in *ssov1.AccessReq) (*ssov1.AccessResp, error)
+	CheckConfirmCode(ctx context.Context, in *ssov1.CheckConfirmCodeReq) (*ssov1.CheckConfirmCodeResp, error)
+	VerifyEmail(ctx context.Context, in *ssov1.Empty) (*ssov1.Empty, error)
 }

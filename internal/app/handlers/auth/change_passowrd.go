@@ -43,12 +43,13 @@ func (s *Server) ChangePass(ctx context.Context, in *ssov1.ChangePassReq) (*ssov
 	}
 	if eve != entities.ChangePassword {
 		log.Errorf("user %s is not in the change passwoed queue", user.Username)
+		log.Infof("event: %s", eve)
 		return nil, status.Error(codes.PermissionDenied, "user is not in the change email password")
 	}
 
 	newPassword, err := bcrypt.GenerateFromPassword([]byte(in.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
-		log.Errorf("error generating new password for user: %s", user.Username)
+		log.Errorf("error generating new hash password for user: %s", user.Username)
 		return nil, status.Error(codes.Internal, "Server Error")
 	}
 

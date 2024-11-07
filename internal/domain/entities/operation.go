@@ -4,7 +4,7 @@ type OperationType string
 
 const (
 	ChangeEmail    = "CHANGE_EMAIL"
-	ChangePassword = "CHANGE_PASS"
+	ChangePassword = "CHANGE_PASSWORD"
 	ChangeUsername = "CHANGE_USERNAME"
 	ConfirmEmail   = "CONFIRM_EMAIL"
 	Login          = "LOGIN"

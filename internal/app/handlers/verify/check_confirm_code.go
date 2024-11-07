@@ -9,8 +9,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// AccessForChanges is a method that adds a user to the event list
-func (s *Server) AccessForChanges(ctx context.Context, in *ssov1.AccessReq) (*ssov1.AccessResp, error) {
+// CheckConfirmCode is a method that adds a user to the event list
+func (s *Server) CheckConfirmCode(ctx context.Context, in *ssov1.CheckConfirmCodeReq) (*ssov1.CheckConfirmCodeResp, error) {
 	log := s.Log
 
 	user, err := jwt.VerificationJWT(ctx, log, s.Config.JWT.SecretKey)
@@ -34,7 +34,7 @@ func (s *Server) AccessForChanges(ctx context.Context, in *ssov1.AccessReq) (*ss
 
 	log.Infof("Add user %s to event list %s", userDB.Username, in.Eve.String())
 
-	return &ssov1.AccessResp{
+	return &ssov1.CheckConfirmCodeResp{
 		Eve: in.Eve,
 	}, nil
 }

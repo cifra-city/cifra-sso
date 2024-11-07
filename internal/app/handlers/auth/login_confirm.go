@@ -10,20 +10,20 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) ConfirmLogin(ctx context.Context, in *ssov1.ConfirmLoginReq) (*ssov1.ConfirmLoginResp, error) {
+func (s *Server) LoginConfirm(ctx context.Context, in *ssov1.LoginConfirmReq) (*ssov1.LoginConfirmResp, error) {
 	var user data.UsersSecret
 	var err error
 
 	log := s.Log
 
-	if in.Username == nil {
+	if in.Username != nil {
 		user, err = s.Queries.GetUserByUsername(ctx, *in.Username)
 		if err != nil {
 			log.Errorf("Error getting user by username in DB: %s", err)
 			return nil, status.Error(codes.Internal, "failed to retrieve user")
 		}
 	}
-	if in.Email == nil {
+	if in.Email != nil {
 		user, err = s.Queries.GetUserByEmail(ctx, *in.Email)
 		if err != nil {
 			log.Errorf("Error getting user by rmail in DB: %s", err)
@@ -31,7 +31,7 @@ func (s *Server) ConfirmLogin(ctx context.Context, in *ssov1.ConfirmLoginReq) (*
 		}
 	}
 
-	availability := s.Email.CheckInEmailList(user.Username, in.Code)
+	availability := s.Email.CheckInEmailList(user.Email, in.Code)
 	if !availability {
 		log.Errorf("Code is not available")
 		return nil, status.Error(codes.PermissionDenied, "code is not available")
@@ -44,7 +44,7 @@ func (s *Server) ConfirmLogin(ctx context.Context, in *ssov1.ConfirmLoginReq) (*
 	}
 
 	log.Infof("successfully logged in user %s", user.Username)
-	return &ssov1.ConfirmLoginResp{
+	return &ssov1.LoginConfirmResp{
 		Token: &token,
 	}, nil
 }

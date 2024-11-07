@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Auth_Login_FullMethodName          = "/auth.Auth/Login"
-	Auth_ConfirmLogin_FullMethodName   = "/auth.Auth/ConfirmLogin"
+	Auth_LoginConfirm_FullMethodName   = "/auth.Auth/LoginConfirm"
 	Auth_Logout_FullMethodName         = "/auth.Auth/Logout"
 	Auth_ChangePass_FullMethodName     = "/auth.Auth/ChangePass"
 	Auth_ChangeUsername_FullMethodName = "/auth.Auth/ChangeUsername"
@@ -34,7 +34,7 @@ const (
 // Auth service for authentication and authorization users
 type AuthClient interface {
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
-	ConfirmLogin(ctx context.Context, in *ConfirmLoginReq, opts ...grpc.CallOption) (*ConfirmLoginResp, error)
+	LoginConfirm(ctx context.Context, in *LoginConfirmReq, opts ...grpc.CallOption) (*LoginConfirmResp, error)
 	Logout(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Empty, error)
 	ChangePass(ctx context.Context, in *ChangePassReq, opts ...grpc.CallOption) (*Empty, error)
 	ChangeUsername(ctx context.Context, in *ChangeUsernameReq, opts ...grpc.CallOption) (*Empty, error)
@@ -59,10 +59,10 @@ func (c *authClient) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallO
 	return out, nil
 }
 
-func (c *authClient) ConfirmLogin(ctx context.Context, in *ConfirmLoginReq, opts ...grpc.CallOption) (*ConfirmLoginResp, error) {
+func (c *authClient) LoginConfirm(ctx context.Context, in *LoginConfirmReq, opts ...grpc.CallOption) (*LoginConfirmResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ConfirmLoginResp)
-	err := c.cc.Invoke(ctx, Auth_ConfirmLogin_FullMethodName, in, out, cOpts...)
+	out := new(LoginConfirmResp)
+	err := c.cc.Invoke(ctx, Auth_LoginConfirm_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func (c *authClient) ChangeEmail(ctx context.Context, in *ChangeEmailReq, opts .
 // Auth service for authentication and authorization users
 type AuthServer interface {
 	Login(context.Context, *LoginReq) (*LoginResp, error)
-	ConfirmLogin(context.Context, *ConfirmLoginReq) (*ConfirmLoginResp, error)
+	LoginConfirm(context.Context, *LoginConfirmReq) (*LoginConfirmResp, error)
 	Logout(context.Context, *Empty) (*Empty, error)
 	ChangePass(context.Context, *ChangePassReq) (*Empty, error)
 	ChangeUsername(context.Context, *ChangeUsernameReq) (*Empty, error)
@@ -134,8 +134,8 @@ type UnimplementedAuthServer struct{}
 func (UnimplementedAuthServer) Login(context.Context, *LoginReq) (*LoginResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAuthServer) ConfirmLogin(context.Context, *ConfirmLoginReq) (*ConfirmLoginResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ConfirmLogin not implemented")
+func (UnimplementedAuthServer) LoginConfirm(context.Context, *LoginConfirmReq) (*LoginConfirmResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginConfirm not implemented")
 }
 func (UnimplementedAuthServer) Logout(context.Context, *Empty) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
@@ -188,20 +188,20 @@ func _Auth_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_ConfirmLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ConfirmLoginReq)
+func _Auth_LoginConfirm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginConfirmReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).ConfirmLogin(ctx, in)
+		return srv.(AuthServer).LoginConfirm(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Auth_ConfirmLogin_FullMethodName,
+		FullMethod: Auth_LoginConfirm_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).ConfirmLogin(ctx, req.(*ConfirmLoginReq))
+		return srv.(AuthServer).LoginConfirm(ctx, req.(*LoginConfirmReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -290,8 +290,8 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Auth_Login_Handler,
 		},
 		{
-			MethodName: "ConfirmLogin",
-			Handler:    _Auth_ConfirmLogin_Handler,
+			MethodName: "LoginConfirm",
+			Handler:    _Auth_LoginConfirm_Handler,
 		},
 		{
 			MethodName: "Logout",
