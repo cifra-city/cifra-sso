@@ -45,15 +45,15 @@ func main() {
 	actionPermissionModule := action_permission.NewActionPermission(cfg, logger)
 
 	// Create the Server with the necessary dependencies
-	authenticationSrv := auth.NewAuthServer(queries, cfg, logger, emailModule, actionPermissionModule)
 	registrationSrv := reg.NewRegServer(queries, cfg, logger)
+	authenticationSrv := auth.NewAuthServer(queries, cfg, logger, emailModule, actionPermissionModule)
 	verificationSrv := verify.NewVerifyServer(queries, cfg, logger, emailModule, actionPermissionModule)
 
 	grpcServer := grpc.NewServer()
 
 	// Register the Server implementation with the gRPC server
-	ssov1.RegisterAuthServer(grpcServer, authenticationSrv)
 	ssov1.RegisterRegServer(grpcServer, registrationSrv)
+	ssov1.RegisterAuthServer(grpcServer, authenticationSrv)
 	ssov1.RegisterVerifyServer(grpcServer, verificationSrv)
 
 	// Start listening on the specified port.
