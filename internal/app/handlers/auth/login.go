@@ -7,6 +7,7 @@ import (
 
 	ssov1 "github.com/cifra-city/cifra-sso/internal/api"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
+	"github.com/cifra-city/cifra-sso/internal/domain/entities"
 	"github.com/cifra-city/cifra-sso/internal/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -43,6 +44,18 @@ func (s *Server) Login(ctx context.Context, in *ssov1.LoginReq) (*ssov1.LoginRes
 		log.Infof("Start try to response by %s", user.Email)
 	} else {
 		return nil, status.Error(codes.InvalidArgument, "username or email not provided")
+	}
+
+	if user.EmailStatus {
+		eve, err := s.ActionPermission.GetEvent(user.Username)
+		if err != nil {
+			log.Errorf("error checking in queue: %v", err)
+			return nil, status.Error(codes.Internal, "failed to check in queue")
+		}
+		if eve != entities.Login {
+			log.Errorf("user %s is not in the login queue", user.Username)
+			return nil, status.Error(codes.PermissionDenied, "user is not in the login queue")
+		}
 	}
 
 	// Compare the provided password with the stored hashed password.
