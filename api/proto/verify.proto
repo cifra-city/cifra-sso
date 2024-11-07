@@ -1,0 +1,35 @@
+syntax = 'proto3';
+
+package auth;
+
+option go_package = "github.com/cifra-city/cifra-sso;ssov1";
+
+import "api/proto/auth.proto";
+
+service Verify {
+  rpc VerifyEmail(VerifyEmailReq) returns (Empty);
+
+  rpc SendConfirmCode(Empty) returns (InquiryResp);     // Запрос для получения доступа на изменение данных
+  rpc AccessForChanges(AccessReq) returns (AccessResp); // Подтверждение доступа на изменение данных
+}
+
+message InquiryReq{
+  events eve = 1;
+}
+
+message AccessReq{
+  events eve = 1;
+  string code = 2;
+}
+
+message AccessResp {
+  events eve = 1;
+}
+
+message InquiryResp{
+  string link = 1;
+}
+
+message VerifyEmailReq {
+  string code = 1;
+}

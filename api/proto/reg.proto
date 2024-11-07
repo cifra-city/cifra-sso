@@ -1,0 +1,17 @@
+syntax = 'proto3';
+
+package auth;
+
+option go_package = "github.com/cifra-city/cifra-sso;ssov1";
+
+import "api/proto/auth.proto";
+
+service Reg {
+  rpc Register(RegisterReq) returns (Empty);
+}
+
+message RegisterReq {
+  string email = 1;
+  string username = 2;
+  string password = 3;
+}
