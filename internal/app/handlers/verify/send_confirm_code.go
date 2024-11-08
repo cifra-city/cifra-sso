@@ -3,9 +3,9 @@ package verify
 import (
 	"context"
 
+	"github.com/cifra-city/cifra-jwt"
 	ssov1 "github.com/cifra-city/cifra-sso/internal/api"
 	"github.com/cifra-city/cifra-sso/internal/app/modules/email"
-	"github.com/cifra-city/cifra-sso/internal/pkg/jwt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -14,7 +14,7 @@ import (
 func (s *Server) SendConfirmCode(ctx context.Context, in *ssov1.Empty) (*ssov1.InquiryResp, error) {
 	log := s.Log
 
-	user, err := jwt.VerificationJWT(ctx, log, s.Config.JWT.SecretKey)
+	user, err := cifra_jwt.VerificationJWT(ctx, log, s.Config.JWT.SecretKey)
 	if err != nil {
 		log.Errorf("Error getting user from JWT-token: %s", err)
 		return nil, status.Error(codes.Unauthenticated, "invalid token")

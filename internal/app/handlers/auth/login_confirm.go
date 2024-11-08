@@ -3,9 +3,9 @@ package auth
 import (
 	"context"
 
+	"github.com/cifra-city/cifra-jwt"
 	ssov1 "github.com/cifra-city/cifra-sso/internal/api"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
-	"github.com/cifra-city/cifra-sso/internal/pkg/jwt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -37,7 +37,7 @@ func (s *Server) LoginConfirm(ctx context.Context, in *ssov1.LoginConfirmReq) (*
 		return nil, status.Error(codes.PermissionDenied, "code is not available")
 	}
 
-	token, err := jwt.GenerateJWT(user.ID, s.Config.JWT.TokenLifetime, s.Config.JWT.SecretKey)
+	token, err := cifra_jwt.GenerateJWT(user.ID, s.Config.JWT.TokenLifetime, s.Config.JWT.SecretKey)
 	if err != nil {
 		log.Error("error creating jwt token %s", err)
 		return nil, status.Error(codes.Internal, "failed to generate token")

@@ -5,10 +5,10 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/cifra-city/cifra-jwt"
 	ssov1 "github.com/cifra-city/cifra-sso/internal/api"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
 	"github.com/cifra-city/cifra-sso/internal/domain/entities"
-	"github.com/cifra-city/cifra-sso/internal/pkg/jwt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -16,7 +16,7 @@ import (
 func (s *Server) VerifyEmail(ctx context.Context, in *ssov1.Empty) (*ssov1.Empty, error) {
 	log := s.Log
 
-	userID, err := jwt.VerificationJWT(ctx, log, s.Config.JWT.SecretKey)
+	userID, err := cifra_jwt.VerificationJWT(ctx, log, s.Config.JWT.SecretKey)
 	if err != nil {
 		log.Error("Error getting user from JWT-token: %s", err)
 		return nil, status.Error(codes.Unauthenticated, "invalid token")
