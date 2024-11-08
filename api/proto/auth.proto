@@ -4,6 +4,8 @@ package auth;
 
 option go_package = "github.com/cifra-city/cifra-sso;ssov1";
 
+import "google/api/annotations.proto";
+
 enum events {
   LOGIN = 0;
   CHANGE_PASSWORD = 1;
@@ -14,14 +16,45 @@ enum events {
 
 // Auth service for authentication and authorization users
 service Auth {
-  rpc Login(LoginReq) returns (LoginResp);
-  rpc LoginConfirm(LoginConfirmReq) returns (LoginConfirmResp);  // Confirm login
+  rpc Login(LoginReq) returns (LoginResp) {
+    option (google.api.http) = {
+      post: "/v1/auth/login"
+      body: "*"
+    };
+  }
 
-  rpc Logout(Empty) returns (Empty);
+  rpc LoginConfirm(LoginConfirmReq) returns (LoginConfirmResp) {
+    option (google.api.http) = {
+      post: "/v1/auth/login/confirm"
+    };
+  }
 
-  rpc ChangePass(ChangePassReq) returns (Empty);
-  rpc ChangeUsername(ChangeUsernameReq) returns (Empty);
-  rpc ChangeEmail(ChangeEmailReq) returns (Empty);
+  rpc Logout(Empty) returns (Empty) {
+    option (google.api.http) = {
+      post: "/v1/auth/logout"
+    };
+  }
+
+  rpc ChangePass(ChangePassReq) returns (Empty) {
+    option (google.api.http) = {
+      post: "/v1/auth/change/password"
+      body: "*"
+    };
+  }
+
+  rpc ChangeUsername(ChangeUsernameReq) returns (Empty) {
+    option (google.api.http) = {
+      post: "/v1/auth/change/username"
+      body: "*"
+    };
+  }
+
+  rpc ChangeEmail(ChangeEmailReq) returns (Empty) {
+    option (google.api.http) = {
+      post: "/v1/auth/change/email"
+      body: "*"
+    };
+  }
 }
 
 message LoginReq{
