@@ -1,5 +1,6 @@
 .idea
 .vscode
 node_modules
-local_config.yaml
+config.yaml
 vendor
+main

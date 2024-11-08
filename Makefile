@@ -1,18 +1,20 @@
 PROTO_DIR=api/proto
 PROTO_GEN_DIR=internal/api
 DOC_DIR=api/rest
+GOOGLEAPIS_DIR=internal/pkg/googleapis
 
 DB_URL=postgresql://postgres:postgres@localhost:5555/postgres?sslmode=disable
 
 generate-proto:
 	mkdir -p $(PROTO_GEN_DIR) && \
-	protoc --go_out=$(PROTO_GEN_DIR) --go-grpc_out=$(PROTO_GEN_DIR) \
-		--go_opt=M$(PROTO_DIR)/auth.proto=./ \
-		--go-grpc_opt=M$(PROTO_DIR)/auth.proto=./ \
-		--go_opt=M$(PROTO_DIR)/reg.proto=./ \
-		--go-grpc_opt=M$(PROTO_DIR)/reg.proto=./ \
-		--go_opt=M$(PROTO_DIR)/verify.proto=./ \
-		--go-grpc_opt=M$(PROTO_DIR)/verify.proto=./ \
+	protoc -I $(PROTO_DIR) \
+		-I $(GOOGLEAPIS_DIR) \
+		--go_out=$(PROTO_GEN_DIR) \
+		--go-grpc_out=$(PROTO_GEN_DIR) \
+		--grpc-gateway_out=$(PROTO_GEN_DIR) \
+		--go_opt=paths=source_relative \
+		--go-grpc_opt=paths=source_relative \
+		--grpc-gateway_opt=paths=source_relative \
 		$(PROTO_DIR)/auth.proto \
 		$(PROTO_DIR)/reg.proto \
 		$(PROTO_DIR)/verify.proto

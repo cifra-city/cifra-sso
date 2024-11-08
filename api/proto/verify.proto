@@ -4,23 +4,28 @@ package auth;
 
 option go_package = "github.com/cifra-city/cifra-sso;ssov1";
 
-import "api/proto/auth.proto";
-
-//enum events {
-//  LOGIN = 0;
-//  CHANGE_PASSWORD = 1;
-//  CHANGE_USERNAME = 2;
-//  CHANGE_EMAIL = 3;
-//  CONFIRM_EMAIL = 4;
-//}
-//
-//message Empty {}
+import "google/api/annotations.proto";
+import "auth.proto";
 
 service Verify {
-  rpc VerifyEmail(Empty) returns (Empty);
+  rpc VerifyEmail(Empty) returns (Empty) {
+    option (google.api.http) = {
+      post: "/v1/verify/email"
+    };
+  }
 
-  rpc SendConfirmCode(Empty) returns (InquiryResp);     // Запрос для получения доступа на изменение данных
-  rpc CheckConfirmCode(CheckConfirmCodeReq) returns (CheckConfirmCodeResp); // Подтверждение доступа на изменение данных
+  rpc SendConfirmCode(Empty) returns (InquiryResp) {
+    option (google.api.http) = {
+      post: "/v1/verify/send"
+    };
+  } // Запрос для получения доступа на изменение данных
+
+  rpc CheckConfirmCode(CheckConfirmCodeReq) returns (CheckConfirmCodeResp) {
+    option (google.api.http) = {
+      post: "/v1/verify/check"
+      body: "*"
+    };
+  } // Подтверждение доступа на изменение данных
 }
 
 message InquiryReq{
