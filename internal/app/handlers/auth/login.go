@@ -5,10 +5,10 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/cifra-city/cifra-jwt"
 	ssov1 "github.com/cifra-city/cifra-sso/internal/api"
 	"github.com/cifra-city/cifra-sso/internal/app/modules/email"
 	"github.com/cifra-city/cifra-sso/internal/db/data"
-	"github.com/cifra-city/cifra-sso/internal/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -69,7 +69,7 @@ func (s *Server) Login(ctx context.Context, in *ssov1.LoginReq) (*ssov1.LoginRes
 		return &ssov1.LoginResp{}, nil
 	}
 
-	token, err := jwt.GenerateJWT(user.ID, s.Config.JWT.TokenLifetime, s.Config.JWT.SecretKey)
+	token, err := cifra_jwt.GenerateJWT(user.ID, s.Config.JWT.TokenLifetime, s.Config.JWT.SecretKey)
 	if err != nil {
 		log.Error("error creating jwt token %s", err)
 		return nil, status.Error(codes.Internal, "failed to generate token")
