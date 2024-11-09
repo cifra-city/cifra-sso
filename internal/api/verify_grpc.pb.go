@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.21.12
-// source: api/proto/verify.proto
+// source: verify.proto
 
 package ssov1
 
@@ -193,5 +193,5 @@ var Verify_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/proto/verify.proto",
+	Metadata: "verify.proto",
 }

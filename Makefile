@@ -1,7 +1,8 @@
 PROTO_DIR=api/proto
 PROTO_GEN_DIR=internal/api
-DOC_DIR=api/rest
 GOOGLEAPIS_DIR=internal/pkg/googleapis
+DOCS_DIR=api/docs
+DOCS_FILE=sso.json
 
 DB_URL=postgresql://postgres:postgres@localhost:5555/postgres?sslmode=disable
 
@@ -19,11 +20,14 @@ generate-proto:
 		$(PROTO_DIR)/reg.proto \
 		$(PROTO_DIR)/verify.proto
 
-generate-docs: create-docs-dir
-	protoc -I $(PROTO_DIR) --doc_out=$(DOC_DIR) --doc_opt=html,index.html $(PROTO_DIR)/sso.proto
+generate-docs:
+	mkdir -p $(DOCS_DIR) && \
+	protoc -I $(PROTO_DIR) \
+		-I internal/pkg/googleapis \
+		--openapiv2_out=$(DOCS_DIR) \
+		--openapiv2_opt=logtostderr=true,allow_merge=true \
+		$(PROTO_DIR)/*.proto
 
-create-docs-dir:
-	mkdir -p $(DOC_DIR)
 
 create-db-image:
 	docker run --name cifra-sso -p 5555:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -d postgres:12-alpine

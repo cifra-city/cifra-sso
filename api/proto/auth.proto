@@ -23,6 +23,7 @@ service Auth {
     };
   }
 
+  // Confirm login with code
   rpc LoginConfirm(LoginConfirmReq) returns (LoginConfirmResp) {
     option (google.api.http) = {
       post: "/v1/auth/login/confirm"
